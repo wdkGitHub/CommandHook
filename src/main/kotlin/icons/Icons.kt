@@ -1,0 +1,24 @@
+package icons
+
+import com.intellij.openapi.util.IconLoader.getIcon
+import javax.swing.Icon
+
+/**
+ * @author WangDeKun
+ * @see [SDK](https://www.jetbrains.org/intellij/sdk/docs/reference_guide/work_with_icons_and_images.html)
+ * <br></br>
+ */
+object Icons {
+
+    @JvmField
+    val TERMINAL_ICON: Icon = getIcon("/icons/terminal.png", Icons::class.java)
+
+    @JvmField
+    val MARKDOWN: Icon = getIcon("/icons/markdown.png", Icons::class.java)
+
+    @JvmField
+    val FORK: Icon = getIcon("/icons/fork.png", Icons::class.java)
+
+    @JvmField
+    val SOURCETREE: Icon = getIcon("/icons/sourcetree.png", Icons::class.java)
+}

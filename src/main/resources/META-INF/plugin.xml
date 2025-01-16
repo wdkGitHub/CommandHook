@@ -1,0 +1,81 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>blog.dekun.wang.extension</id>
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>WdkExtension</name>
+    <vendor email="wangdekunemail@gmeil.com" url="https://blog.dekun.wang">WangDekun</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description>
+        <![CDATA[
+     <p>
+       This is a sample plugin that demonstrates how to create a simple plugin.
+      </p>
+        ]]>
+    </description>
+
+    <!-- Product and plugin compatibility requirements. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <!-- Extension points defined by the plugin. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="CommandExtensions" displayType="BALLOON"/>
+
+        <postStartupActivity implementation="blog.dekun.wang.extension.startup.Startup"/>
+        <!--     UI   测试-->
+        <!--        <toolWindow id="ConfigToolWindow" factoryClass="blog.dekun.wang.extension.test.ConfigToolWindowFactory" anchor="bottom" canCloseContents="true"/>-->
+        <applicationConfigurable id="ConfigConfigurableTest" instance="blog.dekun.wang.extension.ui.ConfigConfigurable" displayName=""/>
+    </extensions>
+    <actions>
+        <!--<editor-fold desc="最近项目">-->
+        <action id="blog.dekun.wang.terminal" class="blog.dekun.wang.extension.action.TerminalAction" icon="Icons.TERMINAL_ICON">
+            <add-to-group group-id="WelcomeScreenRecentProjectActionGroup" anchor="after" relative-to-action="WelcomeScreen.RevealIn"/>
+        </action>
+        <action id="blog.dekun.wang.git.open" class="blog.dekun.wang.extension.action.git.GitOpenAction">
+            <add-to-group group-id="WelcomeScreenRecentProjectActionGroup" anchor="after" relative-to-action="blog.dekun.wang.terminal"/>
+        </action>
+        <action id="blog.dekun.wang.fork" class="blog.dekun.wang.extension.action.git.ForkAction">
+            <add-to-group group-id="WelcomeScreenRecentProjectActionGroup" anchor="after" relative-to-action="blog.dekun.wang.git.open"/>
+        </action>
+        <action id="blog.dekun.wang.sourcetree" class="blog.dekun.wang.extension.action.git.SourcetreeAction">
+            <add-to-group group-id="WelcomeScreenRecentProjectActionGroup" anchor="after" relative-to-action="blog.dekun.wang.fork"/>
+        </action>
+        <!--</editor-fold>-->
+        <action id="blog.dekun.wang.Typora" class="blog.dekun.wang.extension.action.TyporaAction">
+            <add-to-group group-id="RunContextPopupGroup" anchor="before" relative-to-action="OpenInBrowserGroup"/>
+        </action>
+        <action id="blog.dekun.wang.ITerm2" class="blog.dekun.wang.extension.action.TerminalAction">
+            <add-to-group group-id="RunContextPopupGroup" anchor="after" relative-to-action="blog.dekun.wang.Typora"/>
+            <add-to-group group-id="MainToolbarRight" anchor="before" relative-to-action="ExecutionTargetsToolbarGroup"/>
+        </action>
+        <action id="blog.dekun.wang.ForkAppProject" class="blog.dekun.wang.extension.action.git.ForkAction">
+            <add-to-group group-id="RunContextPopupGroup" anchor="after" relative-to-action="blog.dekun.wang.ITerm2"/>
+        </action>
+        <action id="blog.dekun.wang.SourcetreeAppProject" class="blog.dekun.wang.extension.action.git.SourcetreeAction">
+            <add-to-group group-id="RunContextPopupGroup" anchor="after" relative-to-action="blog.dekun.wang.ForkAppProject"/>
+        </action>
+        <action id="blog.dekun.wang.GitOpenProject" class="blog.dekun.wang.extension.action.git.GitOpenAction">
+            <add-to-group group-id="RunContextPopupGroup" anchor="after" relative-to-action="blog.dekun.wang.SourcetreeAppProject"/>
+        </action>
+        <!--      TEST  -->
+
+        <!--        <group id="MyActionGroup" text="自定义组">-->
+        <!--            <add-to-group group-id="MainMenu" anchor="first"/>-->
+        <!--            <add-to-group group-id="MainToolbarRight" anchor="before" relative-to-action="ExecutionTargetsToolbarGroup"/>-->
+        <!--            <action id="A" class="blog.dekun.wang.extension.test.A" text="A" description="A">-->
+        <!--                <add-to-group group-id="ToolsMenu" anchor="after" relative-to-action="PublishGroup"/>-->
+        <!--            </action>-->
+        <!--        </group>-->
+        <group id="CommandExtensions" popup="true">
+            <!--  group 测试中-->
+            <add-to-group group-id="MainToolbarRight" anchor="before" relative-to-action="ExecutionTargetsToolbarGroup"/>
+            <action id="blog.dekun.wang.extension.ui.ConfigUiAction" class="blog.dekun.wang.extension.ui.ConfigUiAction"/>
+            <separator/>
+            <separator/>
+        </group>
+    </actions>
+</idea-plugin>
