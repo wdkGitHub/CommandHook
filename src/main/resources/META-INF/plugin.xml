@@ -26,10 +26,13 @@
         <notificationGroup id="CommandExtensions" displayType="BALLOON"/>
 
         <postStartupActivity implementation="blog.dekun.wang.extension.startup.Startup"/>
+        <applicationConfigurable id="blog.dekun.wang.extension.ui.ConfigConfigurable" instance="blog.dekun.wang.extension.ui.ConfigConfigurable" displayName=""/>
         <!--     UI   测试-->
         <!--        <toolWindow id="ConfigToolWindow" factoryClass="blog.dekun.wang.extension.test.ConfigToolWindowFactory" anchor="bottom" canCloseContents="true"/>-->
-        <applicationConfigurable id="ConfigConfigurableTest" instance="blog.dekun.wang.extension.ui.ConfigConfigurable" displayName=""/>
     </extensions>
+    <applicationListeners>
+        <listener class="blog.dekun.wang.extension.listener.GlobalActionListener" topic="com.intellij.openapi.actionSystem.ex.AnActionListener"/>
+    </applicationListeners>
     <actions>
         <!--<editor-fold desc="最近项目">-->
         <action id="blog.dekun.wang.terminal" class="blog.dekun.wang.extension.action.TerminalAction" icon="Icons.TERMINAL_ICON">

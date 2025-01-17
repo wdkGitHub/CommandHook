@@ -2,7 +2,7 @@ package blog.dekun.wang.extension.ui
 
 import blog.dekun.wang.extension.action.CustomCommandAction
 import blog.dekun.wang.extension.data.ConfigInfo
-import blog.dekun.wang.extension.services.WorkspaceConfigService
+import blog.dekun.wang.extension.services.ServiceUtils
 import blog.dekun.wang.extension.utils.Utils
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.options.Configurable
@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.components.JBList
-import com.intellij.util.ui.FormBuilder
 import java.awt.BorderLayout
 import java.awt.CardLayout
 import javax.swing.*
@@ -45,20 +44,13 @@ class ConfigConfigurable : Configurable {
     private fun loadPersistedData() {
         val project = project
         if (project != null) {
-            val service = WorkspaceConfigService.getInstance(project)
             leftItemList.clear()
-            service.state.commands.forEach { leftItemList.addElement(it.copy()) }
+            ServiceUtils.getConfigInfoList(project).forEach { leftItemList.addElement(it) }
         }
     }
 
     override fun createComponent(): JComponent {
         loadPersistedData()
-
-
-        val updateRightClickVisibility: (rightDetail: RightDetail) -> Unit = { rightDetail ->
-            rightDetail.isRightClick.isEnabled = rightDetail.isTargetFile.isSelected || rightDetail.isTargetDir.isSelected
-            rightDetail.isRightClick.isVisible = rightDetail.isTargetFile.isSelected || rightDetail.isTargetDir.isSelected
-        }
 
         val rightPanel = JPanel(CardLayout(10, 10)).apply {
             add(JPanel(BorderLayout()).apply { add(JLabel("请选择或添加命令", JLabel.CENTER), BorderLayout.CENTER) }, "placeholder")
@@ -70,42 +62,27 @@ class ConfigConfigurable : Configurable {
                 cardLayout.show(rightPanel, "placeholder")
             } else {
                 val configInfo = leftItemList[selectedIndex]
-                val rightDetail = RightDetail().apply {
-                    nameField.text = configInfo.name
-                    commandField.text = configInfo.commandStr
-                    isTargetFile.isSelected = configInfo.isTargetFile ?: false
-                    isTargetDir.isSelected = configInfo.isTargetFolder ?: false
-                    isRightClick.isSelected = configInfo.isRightClick ?: false
-                    isEnable.isSelected = configInfo.isEnable ?: true
-                    isApp.isSelected = configInfo.isApp ?: false
-                    addChangeListeners(onNameChanged = { value ->
-                        configInfo.name = value
-                    }, onCommandChanged = { value ->
-                        configInfo.commandStr = value
-                    }, onTargetFileChanged = { value ->
-                        configInfo.isTargetFile = value
-                        updateRightClickVisibility(this)
-                    }, onTargetDirChanged = { value ->
-                        configInfo.isTargetFolder = value
-                        updateRightClickVisibility(this)
-                    }, onRightClickChanged = { value ->
-                        configInfo.isRightClick = value
-                    }, onEnableChanged = { value ->
-                        configInfo.isEnable = value
-                    }, onAppChanged = { value ->
-                        configInfo.isApp = value
-
-                    })
-                    configInfo.index = selectedIndex
-                    updateRightClickVisibility(this)
-                }
-
-                val detailPanel = FormBuilder.createFormBuilder().addComponent(rightDetail.isApp).addLabeledComponent("名称:", rightDetail.nameField)
-                    .addLabeledComponent("命令:", rightDetail.commandField).addComponent(rightDetail.isTargetFile).addComponent(rightDetail.isTargetDir)
-                    .addComponent(rightDetail.isRightClick).addComponent(rightDetail.isEnable).panel
-
                 val rightDetailPanel = JPanel(BorderLayout()).apply {
-                    add(detailPanel, BorderLayout.NORTH)
+                    add(RightDetail.rightDetail {
+                        nameField.text = configInfo.name
+                        commandField.text = configInfo.commandStr
+                        commandExecutionDirectory.text = configInfo.executionDir ?: ""
+                        isTargetFile.isSelected = configInfo.isTargetFile ?: false
+                        isTargetDir.isSelected = configInfo.isTargetFolder ?: false
+                        isRightClick.isSelected = configInfo.isRightClick ?: false
+                        isEnable.isSelected = configInfo.isEnable ?: true
+                        isApp.isSelected = configInfo.isApp ?: false
+                        addChangeListeners(
+                            onNameChanged = { value -> configInfo.name = value },
+                            onCommandChanged = { value -> configInfo.commandStr = value },
+                            onCommandExecutionDirectory = { value -> configInfo.executionDir = value },
+                            onTargetFileChanged = { value -> configInfo.isTargetFile = value },
+                            onTargetDirChanged = { value -> configInfo.isTargetFolder = value },
+                            onRightClickChanged = { value -> configInfo.isRightClick = value },
+                            onEnableChanged = { value -> configInfo.isEnable = value },
+                            onAppChanged = { value -> configInfo.isApp = value })
+                        configInfo.index = selectedIndex
+                    }.jPanel(), BorderLayout.NORTH)
                 }
 
                 // Replace existing panel with new one
@@ -173,8 +150,7 @@ class ConfigConfigurable : Configurable {
 
     override fun isModified(): Boolean {
         val project = project ?: return false
-        val service = WorkspaceConfigService.getInstance(project)
-        val persistedData = service.state.commands
+        val persistedData = ServiceUtils.getConfigInfoList(project)
         val currentData = (0 until leftItemList.size).map { leftItemList[it] }
         return persistedData != currentData
     }
@@ -182,10 +158,9 @@ class ConfigConfigurable : Configurable {
 
     override fun apply() {
         val project = project ?: return
-        val service = WorkspaceConfigService.getInstance(project)
         val currentData = (0 until leftItemList.size).map { leftItemList[it] }
         currentData.forEachIndexed { index, item -> item.index = index }
-        val persistedData = service.state.commands
+        val persistedData = ServiceUtils.getConfigInfoList(project)
         val changes = currentData.size != persistedData.size || currentData.indices.any { i -> !currentData[i].equalsValue(persistedData[i]) }
         println(changes)
         if (changes) {
@@ -198,7 +173,7 @@ class ConfigConfigurable : Configurable {
                 println(it)
             }
             CustomCommandAction.modifyAction(currentDataSort, persistedData)
-            service.state.commands = currentDataSort
+            ServiceUtils.saveConfigInfoList(project, currentDataSort)
         }
         leftItemList.clear()
         Utils.showNotification(project, "配置保存成功", "配置保存成功", NotificationType.INFORMATION)

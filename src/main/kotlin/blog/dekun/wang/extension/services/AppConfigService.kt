@@ -32,10 +32,6 @@ class AppConfigService : PersistentStateComponent<AppConfigService.State> {
         this.state = state
     }
 
-//    fun addCommand(command: Config) {
-//        state.commands.add(command)
-//        ApplicationManager.getApplication().messageBus.syncPublisher(AppConfigListener.TOPIC).onConfigChanged(state)
-//    }
 
     companion object {
 
@@ -45,15 +41,3 @@ class AppConfigService : PersistentStateComponent<AppConfigService.State> {
 
     }
 }
-
-//更新通知
-//interface AppConfigListener {
-//
-//    fun onConfigChanged(state: AppConfigService.State)
-//
-//    companion object {
-//
-//        val TOPIC = Topic.create("AppConfigChanged", AppConfigListener::class.java)
-//    }
-//}
-

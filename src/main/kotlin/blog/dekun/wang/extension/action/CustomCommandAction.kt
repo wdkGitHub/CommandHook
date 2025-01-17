@@ -36,34 +36,38 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
             }
         }
 
-        private fun getActionId(config: ConfigInfo): String {
-            return getActionId(config.name, config.isRightClick ?: false)
+        private fun getActionId(config: ConfigInfo): Array<String> {
+            val baseActionId = getActionId(config.name, false)
+            return if (config.isRightClick == true) {
+                arrayOf(baseActionId, getActionId(config.name, true))
+            } else {
+                arrayOf(baseActionId)
+            }
         }
 
         private fun getActionId(name: String, isRightClick: Boolean): String {
-            return if (isRightClick) {
-                "${Constant.ACTION_GROUP_ID_RIGHT_CLICK}.${name}"
-            } else {
-                "${Constant.ACTION_GROUP_ID}.${name}"
-            }
+            val groupId = if (isRightClick) Constant.ACTION_GROUP_ID_RIGHT_CLICK else Constant.ACTION_GROUP_ID
+            return "$groupId.$name"
         }
 
         private fun addAction(config: ConfigInfo) {
             val actionManager = ActionManager.getInstance()
             if (config.isEnable != true) return
-            // 右键逻辑处理
             if (config.isRightClick == true) {
+                // 右键逻辑处理
                 println("右键")
-            }
-            if (actionManager.getAction(getActionId(config)) != null) {
-                return
-            }
-            val configInfoMainToolbarRight = config.takeIf { it.isRightClick != true } ?: config.copy().apply { isRightClick = false }
-            val action = CustomCommandAction(configInfoMainToolbarRight)
-            actionManager.registerAction(getActionId(configInfoMainToolbarRight), action)
-            val commandExtensions = actionManager.getAction(Constant.ACTION_GROUP_ID)
-            if (commandExtensions is DefaultActionGroup) {
-                commandExtensions.add(action)
+            } else {
+                val actionId = getActionId(config.name, false)
+                if (actionManager.getAction(actionId) != null) {
+                    return
+                }
+                val configInfoMainToolbarRight = config.takeIf { it.isRightClick != true } ?: config.copy().apply { isRightClick = false }
+                val action = CustomCommandAction(configInfoMainToolbarRight)
+                actionManager.registerAction(actionId, action)
+                val commandExtensions = actionManager.getAction(Constant.ACTION_GROUP_ID)
+                if (commandExtensions is DefaultActionGroup) {
+                    commandExtensions.add(action)
+                }
             }
         }
 
@@ -74,8 +78,12 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
                 (actionManager.getAction(actionGroupId) as? DefaultActionGroup)?.remove(action)
                 actionManager.unregisterAction(actionId)
             }
-            remove(getActionId(config.name, true), Constant.ACTION_GROUP_ID_RIGHT_CLICK)
-            remove(getActionId(config.name, false), Constant.ACTION_GROUP_ID)
+            getActionId(config).forEach { actionId ->
+                when {
+                    actionId.startsWith(Constant.ACTION_GROUP_ID) -> remove(actionId, Constant.ACTION_GROUP_ID)
+                    actionId.startsWith(Constant.ACTION_GROUP_ID_RIGHT_CLICK) -> remove(actionId, Constant.ACTION_GROUP_ID_RIGHT_CLICK)
+                }
+            }
         }
 
     }

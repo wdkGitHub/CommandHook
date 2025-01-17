@@ -1,92 +1,114 @@
 package blog.dekun.wang.extension.ui
 
+import com.intellij.util.ui.FormBuilder
 import javax.swing.JCheckBox
+import javax.swing.JPanel
 import javax.swing.JTextField
 
+
 data class RightDetail(
-    val nameField: JTextField = JTextField().apply {
-        isEnabled = false
-    },
+    val isApp: JCheckBox = JCheckBox("全局配置"),
+    val nameField: JTextField = JTextField().apply { isEnabled = false },
     val commandField: JTextField = JTextField(),
-    val isApp: JCheckBox = JCheckBox("是应用"),
-    val isTargetFile: JCheckBox = JCheckBox("是目标文件"),
-    val isTargetDir: JCheckBox = JCheckBox("是目标目录"),
-    val isRightClick: JCheckBox = JCheckBox("添加右键菜单").apply {
+    val isSetDirectory: JCheckBox = JCheckBox("指定目录").apply {
         isEnabled = false
         isVisible = false
     },
-    val isEnable: JCheckBox = JCheckBox("启用")
+    val commandExecutionDirectory: JTextField = JTextField().apply {
+        isEnabled = false
+        isVisible = false
+        text = ""
+    },
+
+    val isRightClick: JCheckBox = JCheckBox("绑定右键菜单").apply {
+        isEnabled = false
+        isVisible = false
+    },
+    val isTargetFile: JCheckBox = JCheckBox("是目标文件").apply {
+        isEnabled = false
+        isVisible = false
+    },
+    val isTargetDir: JCheckBox = JCheckBox("是目标目录").apply {
+        isEnabled = false
+        isVisible = false
+    },
+    val isEnable: JCheckBox = JCheckBox("启用").apply {
+        isSelected = true
+    }
 ) {
 
-    fun addChangeListeners(
-        onNameChanged: (String) -> Unit = { value ->
-            println(value)
-        },
-        onCommandChanged: (String) -> Unit = { value ->
-            println(value)
-        },
-        onAppChanged: (Boolean) -> Unit = { value ->
-            println(value)
-        },
-        onTargetFileChanged: (Boolean) -> Unit = { value ->
-            println(value)
-        },
-        onTargetDirChanged: (Boolean) -> Unit = { value ->
-            println(value)
-        },
-        onRightClickChanged: (Boolean) -> Unit = { value ->
-            println(value)
-        },
-        onEnableChanged: (Boolean) -> Unit = { value ->
-            println(value)
-        }
-    ) {
+    companion object {
 
-        nameField.document.addDocumentListener(object : javax.swing.event.DocumentListener {
-            override fun insertUpdate(e: javax.swing.event.DocumentEvent?) {
-                onNameChanged(nameField.text)
+        fun rightDetail(configure: RightDetail.() -> Unit): RightDetail {
+            return RightDetail().apply(configure).apply {
+                updateRightClickVisibility()
             }
-
-            override fun removeUpdate(e: javax.swing.event.DocumentEvent?) {
-                onNameChanged(nameField.text)
-            }
-
-            override fun changedUpdate(e: javax.swing.event.DocumentEvent?) {
-                onNameChanged(nameField.text)
-            }
-        })
-
-        commandField.document.addDocumentListener(object : javax.swing.event.DocumentListener {
-            override fun insertUpdate(e: javax.swing.event.DocumentEvent?) {
-                onCommandChanged(commandField.text)
-            }
-
-            override fun removeUpdate(e: javax.swing.event.DocumentEvent?) {
-                onCommandChanged(commandField.text)
-            }
-
-            override fun changedUpdate(e: javax.swing.event.DocumentEvent?) {
-                onCommandChanged(commandField.text)
-            }
-        })
-
-        isApp.addItemListener {
-            onAppChanged(isApp.isSelected)
-        }
-        isTargetFile.addItemListener {
-            onTargetFileChanged(isTargetFile.isSelected)
-        }
-
-        isTargetDir.addItemListener {
-            onTargetDirChanged(isTargetDir.isSelected)
-        }
-
-        isRightClick.addItemListener {
-            onRightClickChanged(isRightClick.isSelected)
-        }
-
-        isEnable.addItemListener {
-            onEnableChanged(isEnable.isSelected)
         }
     }
+
+    private fun updateSetDirectoryVisibility() {
+
+    }
+
+    private fun updateRightClickVisibility() {
+
+    }
+
+
+    fun addChangeListeners(
+        onNameChanged: (String) -> Unit = {},
+        onCommandChanged: (String) -> Unit = {},
+        onCommandExecutionDirectory: (String) -> Unit = {},
+        onAppChanged: (Boolean) -> Unit = {},
+        onTargetFileChanged: (Boolean) -> Unit = {},
+        onTargetDirChanged: (Boolean) -> Unit = {},
+        onRightClickChanged: (Boolean) -> Unit = {},
+        onEnableChanged: (Boolean) -> Unit = {}
+    ) {
+        fun JTextField.addTextChangeListener(onChange: (String) -> Unit) {
+            document.addDocumentListener(object : javax.swing.event.DocumentListener {
+                override fun insertUpdate(e: javax.swing.event.DocumentEvent?) = onChange(text)
+                override fun removeUpdate(e: javax.swing.event.DocumentEvent?) = onChange(text)
+                override fun changedUpdate(e: javax.swing.event.DocumentEvent?) = onChange(text)
+            })
+        }
+
+        fun JCheckBox.addStateChangeListener(onChange: (Boolean) -> Unit) {
+            addItemListener { onChange(isSelected) }
+        }
+
+        nameField.addTextChangeListener(onNameChanged)
+        commandField.addTextChangeListener(onCommandChanged)
+
+        commandExecutionDirectory.addTextChangeListener(onCommandExecutionDirectory)
+        isApp.addStateChangeListener(onAppChanged)
+        isTargetFile.addStateChangeListener(onTargetFileChanged)
+        isTargetDir.addStateChangeListener(onTargetDirChanged)
+        isSetDirectory.addStateChangeListener {
+            updateSetDirectoryVisibility()
+        }
+        isRightClick.addStateChangeListener {
+            updateRightClickVisibility()
+            onRightClickChanged(it)
+        }
+        isEnable.addStateChangeListener(onEnableChanged)
+
+
+    }
+
+    fun jPanel(): JPanel {
+
+        return FormBuilder.createFormBuilder()
+            .addComponent(isApp)
+            .addLabeledComponent("   名称:", nameField)
+            .addLabeledComponent("   命令:", commandField)
+            .addComponent(isSetDirectory)
+            .addLabeledComponent("", commandExecutionDirectory)
+            .addComponent(isRightClick)
+            .addComponent(isTargetFile)
+            .addComponent(isTargetDir)
+            .addComponent(isEnable)
+            .panel
+    }
+
 }

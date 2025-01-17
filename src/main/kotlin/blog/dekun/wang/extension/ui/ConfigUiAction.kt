@@ -21,13 +21,8 @@ class ConfigUiAction : BaseAnAction() {
     }
 
     override fun actionPerformed(event: AnActionEvent) {
-
         val configConfigurable = ConfigConfigurable()
         configConfigurable.project = event.project
-        // JOptionPane.showMessageDialog(frame, "这是一个自定义的弹窗内容！");
-        ShowSettingsUtil.getInstance().editConfigurable(event.project, configConfigurable) {
-            println("Display Name: ${configConfigurable.displayName}") // 动态获取 displayName
-            println("回调")
-        }
+        ShowSettingsUtil.getInstance().editConfigurable(event.project, configConfigurable)
     }
 }

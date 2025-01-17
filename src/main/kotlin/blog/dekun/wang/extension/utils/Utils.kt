@@ -2,7 +2,6 @@ package blog.dekun.wang.extension.utils
 
 import blog.dekun.wang.extension.command.Command
 import blog.dekun.wang.extension.constants.Constant
-import com.intellij.ide.projectView.impl.ProjectViewState
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -26,21 +25,6 @@ class Utils {
 
         private const val RECENT_PROJECT_SELECTED_ITEM = "RECENT_PROJECT_SELECTED_ITEM"
 
-
-        /**
-         *  行为: 一键打开文件
-         *  行为: 一键打开目录
-         *  @see com.intellij.ide.projectView.impl.ProjectViewState
-         */
-        fun setOneClickOpenFile(project: Project) {
-            val projectViewStateService = project.getService(ProjectViewState::class.java)
-            val state = projectViewStateService.state
-            if (!state.autoscrollToSource || !state.openDirectoriesWithSingleClick) {
-                projectViewStateService.autoscrollToSource = true
-                projectViewStateService.openDirectoriesWithSingleClick = true
-                projectViewStateService.state
-            }
-        }
 
         /**
          * ProjectsGroupItem
