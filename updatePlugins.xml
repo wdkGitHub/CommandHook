@@ -1,12 +1,3 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugins>
-    <plugin>
-        <id>com.example.plugin1</id>
-        <name>Plugin1</name>
-        <version>1.0.0</version>
-        <idea-version since-build="243.22562.218" until-build="243.*"/>
-        <vendor email="support@example.com" url="https://example.com">Example Vendor</vendor>
-        <description>This is my custom plugin description.</description>
-        <download-url>plugin1.zip</download-url>
-    </plugin>
 </plugins>
