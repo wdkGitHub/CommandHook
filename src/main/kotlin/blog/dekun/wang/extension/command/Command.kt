@@ -4,7 +4,6 @@ import blog.dekun.wang.extension.constants.CommandType
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.SystemInfo
 import java.io.BufferedReader
-import java.io.File
 import java.io.InputStreamReader
 
 /**
@@ -42,18 +41,15 @@ interface Command {
             }
         }
 
-
-        fun execute(commands: String, dirPath: String? = null): String {
-            return execute(commands.split(" "), dirPath)
+        fun executeDefaultDir(commands: List<String>, dirPath: String? = null): String {
+            return execute(commands, dirPath ?: ProjectManager.getInstance().openProjects.firstOrNull()?.basePath ?: System.getProperty("user.home"))
         }
 
         fun execute(commands: List<String>, dirPath: String? = null): String {
-            val processBuilder = ProcessBuilder(commands)
-            val resolvedProject = ProjectManager.getInstance().openProjects.firstOrNull()
-            val directory = dirPath?.let { File(it) } ?: resolvedProject?.basePath?.let { File(it) } ?: File(System.getProperty("user.home"))
-            processBuilder.directory(directory)
-            val joinToString = commands.joinToString(" ")
-            println("执行的命令：$joinToString")
+            val commandStr = commands.joinToString(" ")
+            println("执行的命令：$commandStr")
+            val processBuilder = ProcessBuilder(listOf(System.getenv("SHELL"), "-c", commandStr))
+            dirPath?.let { processBuilder.directory(java.io.File(it)) }
             processBuilder.redirectErrorStream(true)
             val process = processBuilder.start()
             val output = StringBuilder()
@@ -69,21 +65,21 @@ interface Command {
 
         fun gitRemote(gitRepoRootPath: String): String {
             if (SystemInfo.isMac) {
-                return execute(listOf(System.getenv("SHELL"), "-c", "git remote -v"), gitRepoRootPath)
+                return execute(listOf("git", "remote", "-v"), gitRepoRootPath)
             }
             return ""
         }
 
         fun gitRevParseShowTopLevel(path: String): String {
             if (SystemInfo.isMac) {
-                return execute(listOf(System.getenv("SHELL"), "-c", "git rev-parse --show-toplevel"), path)
+                return execute(listOf("git", "rev-parse", "--show-toplevel"), path)
             }
             return ""
         }
 
         fun isInstall(mMDItemCFBundleIdentifier: String): Boolean {
             if (SystemInfo.isMac) {
-                val result = execute(listOf(System.getenv("SHELL"), "-c", "mdfind \"kMDItemCFBundleIdentifier == $mMDItemCFBundleIdentifier\""))
+                val result = execute(listOf("mdfind", "\"kMDItemCFBundleIdentifier == $mMDItemCFBundleIdentifier\""))
                 if (result.isNotEmpty()) {
                     return true
                 }

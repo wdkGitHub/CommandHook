@@ -38,7 +38,7 @@ class MacCommand : Command {
     }
 
     private fun gitOpen(dirPath: String) {
-        execute(listOf("git-open"), dirPath)
+        execute(listOf(System.getProperty("user.home") + "/.oh-my-zsh/custom/plugins/git-open/git-open"), dirPath)
     }
 
     private fun openTerminal(dirPath: String) {
@@ -51,11 +51,11 @@ class MacCommand : Command {
     }
 
     private fun fork(dirPath: String) {
-        execute(listOf("fork", "open", dirPath))
+        execute(listOf("/usr/local/bin/fork", "open", "."), dirPath)
     }
 
     private fun sourceTree(dirPath: String) {
-        execute(listOf("stree", dirPath))
+        execute(listOf("/usr/local/bin/stree", "."), dirPath)
     }
 
 }

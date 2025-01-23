@@ -1,5 +1,6 @@
 package blog.dekun.wang.extension.ui
 
+import com.intellij.ui.components.fields.ExpandableTextField
 import com.intellij.util.ui.FormBuilder
 import javax.swing.JCheckBox
 import javax.swing.JPanel
@@ -9,7 +10,9 @@ import javax.swing.JTextField
 data class RightDetail(
     val isApp: JCheckBox = JCheckBox("全局配置"),
     val nameField: JTextField = JTextField().apply { isEnabled = false },
-    val commandField: JTextField = JTextField(),
+    val commandField: ExpandableTextField = ExpandableTextField().apply {
+
+    },
     val isSetDirectory: JCheckBox = JCheckBox("指定目录").apply {
         isEnabled = false
         isVisible = false

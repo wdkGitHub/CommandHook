@@ -31,7 +31,7 @@
             <add-to-group group-id="WelcomeScreenRecentProjectActionGroup" anchor="after" relative-to-action="blog.dekun.wang.fork"/>
         </action>
         <!--</editor-fold>-->
-        <action id="blog.dekun.wang.Typora" class="blog.dekun.wang.extension.action.TyporaAction" icon="Icons.MARKDOWN">
+        <action id="blog.dekun.wang.Typora" class="blog.dekun.wang.extension.action.TyporaAction" icon="Icons.TYPORA">
             <add-to-group group-id="RunContextPopupGroup" anchor="before" relative-to-action="OpenInBrowserGroup"/>
         </action>
         <action id="blog.dekun.wang.ITerm2" class="blog.dekun.wang.extension.action.TerminalAction" icon="Icons.TERMINAL_ICON">
@@ -40,12 +40,14 @@
         </action>
         <action id="blog.dekun.wang.ForkAppProject" class="blog.dekun.wang.extension.action.git.ForkAction" icon="Icons.FORK">
             <add-to-group group-id="RunContextPopupGroup" anchor="after" relative-to-action="blog.dekun.wang.ITerm2"/>
+            <add-to-group group-id="MainToolbarLeft"/>
         </action>
         <action id="blog.dekun.wang.SourcetreeAppProject" class="blog.dekun.wang.extension.action.git.SourcetreeAction" icon="Icons.SOURCETREE">
             <add-to-group group-id="RunContextPopupGroup" anchor="after" relative-to-action="blog.dekun.wang.ForkAppProject"/>
         </action>
         <action id="blog.dekun.wang.GitOpenProject" class="blog.dekun.wang.extension.action.git.GitOpenAction" icon="AllIcons.Javaee.WebService">
             <add-to-group group-id="RunContextPopupGroup" anchor="after" relative-to-action="blog.dekun.wang.SourcetreeAppProject"/>
+            <add-to-group group-id="MainToolbarLeft"/>
         </action>
         <!--      TEST  -->
 
