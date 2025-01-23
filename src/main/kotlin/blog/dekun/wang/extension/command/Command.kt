@@ -47,7 +47,7 @@ interface Command {
 
         fun execute(commands: List<String>, dirPath: String? = null): String {
             val commandStr = commands.joinToString(" ")
-            println("执行的命令：$commandStr")
+            println("执行的命令：$commandStr $dirPath")
             val processBuilder = ProcessBuilder(commands)
             dirPath?.let { processBuilder.directory(java.io.File(it)) }
             processBuilder.redirectErrorStream(true)
