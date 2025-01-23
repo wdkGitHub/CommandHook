@@ -1,9 +1,9 @@
 package blog.dekun.wang.extension.action
 
 import blog.dekun.wang.extension.action.base.BaseAnAction
-import blog.dekun.wang.extension.command.Command
 import blog.dekun.wang.extension.constants.Constant
 import blog.dekun.wang.extension.data.ConfigInfo
+import blog.dekun.wang.extension.utils.RunToolWindowUtil
 import blog.dekun.wang.extension.utils.Utils
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionManager
@@ -119,12 +119,12 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
             if (virtualFile != null) {
                 val path = configInfo.executionDir?.takeIf { it.isNotBlank() } ?: if (virtualFile.isDirectory) virtualFile.path.substringBeforeLast("/")
                 else virtualFile.path
-                Command.execute(commandStr, path)
+                RunToolWindowUtil.executeWithRealTimeOutput(configInfo.name, commandStr.split(" "), path)
             } else {
-                Command.execute(commandStr)
+                RunToolWindowUtil.executeWithRealTimeOutput(configInfo.name, commandStr.split(" "))
             }
         } else {
-            Command.execute(commandStr)
+            RunToolWindowUtil.executeWithRealTimeOutput(configInfo.name, commandStr.split(" "))
         }
     }
 

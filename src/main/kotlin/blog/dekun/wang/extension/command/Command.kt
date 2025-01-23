@@ -1,6 +1,7 @@
 package blog.dekun.wang.extension.command
 
 import blog.dekun.wang.extension.constants.CommandType
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.SystemInfo
 import java.io.BufferedReader
 import java.io.File
@@ -48,7 +49,9 @@ interface Command {
 
         fun execute(commands: List<String>, dirPath: String? = null): String {
             val processBuilder = ProcessBuilder(commands)
-            dirPath?.let { processBuilder.directory(File(it)) }
+            val resolvedProject = ProjectManager.getInstance().openProjects.firstOrNull()
+            val directory = dirPath?.let { File(it) } ?: resolvedProject?.basePath?.let { File(it) } ?: File(System.getProperty("user.home"))
+            processBuilder.directory(directory)
             val joinToString = commands.joinToString(" ")
             println("执行的命令：$joinToString")
             processBuilder.redirectErrorStream(true)

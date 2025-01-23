@@ -1,6 +1,7 @@
-package blog.dekun.wang.extension.ui
+package blog.dekun.wang.extension.action
 
 import blog.dekun.wang.extension.action.base.BaseAnAction
+import blog.dekun.wang.extension.ui.ConfigConfigurable
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.options.ShowSettingsUtil
 
@@ -17,7 +18,7 @@ import com.intellij.openapi.options.ShowSettingsUtil
 class ConfigUiAction : BaseAnAction() {
 
     override fun update(event: AnActionEvent) {
-        event.presentation.text = "配置"
+        event.presentation.text = "命令配置"
     }
 
     override fun actionPerformed(event: AnActionEvent) {

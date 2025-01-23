@@ -1,5 +1,7 @@
 package blog.dekun.wang.extension.listener
 
+import blog.dekun.wang.extension.services.UnregisterActionService
+import blog.dekun.wang.extension.utils.Utils
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.AnActionListener
 
@@ -16,26 +18,27 @@ import com.intellij.openapi.actionSystem.ex.AnActionListener
 class GlobalActionListener : AnActionListener {
 
     override fun beforeActionPerformed(action: AnAction, event: AnActionEvent) {
-        val actionId = ActionManager.getInstance().getId(action)
-        val actionName = action.templatePresentation.text
-        println("${action.javaClass.name} Action beforeActionPerformed: ID = $actionId, Name = $actionName")
+        if (UnregisterActionService.isEnableNotify()) {
+            val actionId = ActionManager.getInstance().getId(action)
+            val actionName = action.templatePresentation.text
+            val message = """
+            ID = $actionId <br>
+            Name = $actionName <br>
+            Class = ${action.javaClass.name}
+            """.trimIndent()
+            Utils.showNotificationAnActionId("AnActionIdNotificationGroup", message)
+        }
     }
 
     override fun afterActionPerformed(action: AnAction, event: AnActionEvent, result: AnActionResult) {
-        val actionId = ActionManager.getInstance().getId(action)
-        val actionName = action.templatePresentation.text
-        println("${action.javaClass.name} Action afterActionPerformed: ID = $actionId, Name = $actionName")
     }
 
     override fun beforeEditorTyping(c: Char, dataContext: DataContext) {
-        println("beforeEditorTyping")
     }
 
     override fun afterEditorTyping(c: Char, dataContext: DataContext) {
-        println("afterEditorTyping")
     }
 
     override fun beforeShortcutTriggered(shortcut: Shortcut, actions: MutableList<AnAction>, dataContext: DataContext) {
-        println("beforeShortcutTriggered")
     }
 }

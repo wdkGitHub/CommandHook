@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataKey
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vfs.VirtualFile
 
 /**
@@ -96,5 +97,9 @@ class Utils {
             NotificationGroupManager.getInstance().getNotificationGroup(Constant.NOTIFICATION_GROUP_ID).createNotification(title, content, type).notify(project)
         }
 
+        fun showNotificationAnActionId(title: String, content: String) {
+            NotificationGroupManager.getInstance().getNotificationGroup(Constant.NOTIFICATION_GROUP_AN_ACTION_ID).createNotification(title, content, NotificationType.INFORMATION)
+                .notify(ProjectManager.getInstance().openProjects.firstOrNull())
+        }
     }
 }

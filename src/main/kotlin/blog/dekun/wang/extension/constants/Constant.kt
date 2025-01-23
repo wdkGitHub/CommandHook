@@ -33,4 +33,6 @@ object Constant {
 
 
     const val NOTIFICATION_GROUP_ID = ACTION_GROUP_ID
+
+    const val NOTIFICATION_GROUP_AN_ACTION_ID = "AnActionIdNotificationGroup"
 }

@@ -6,6 +6,7 @@
     <!-- Extension points defined by the plugin. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup id="CommandExtensions" displayType="BALLOON"/>
+        <notificationGroup id="AnActionIdNotificationGroup" displayType="BALLOON"/>
 
         <postStartupActivity implementation="blog.dekun.wang.extension.startup.Startup"/>
         <applicationConfigurable id="blog.dekun.wang.extension.ui.ConfigConfigurable" instance="blog.dekun.wang.extension.ui.ConfigConfigurable" displayName=""/>
@@ -56,10 +57,12 @@
         <!--            </action>-->
         <!--        </group>-->
         <group id="CommandExtensions" popup="true">
+            <action id="blog.dekun.wang.extension.action.ListenerAction" class="blog.dekun.wang.extension.action.ListenerAction"/>
+            <action id="blog.dekun.wang.extension.action.UnregisterAction" class="blog.dekun.wang.extension.action.UnregisterAction"/>
+            <separator/>
             <!--  group 测试中-->
             <add-to-group group-id="MainToolbarRight" anchor="before" relative-to-action="ExecutionTargetsToolbarGroup"/>
-            <action id="blog.dekun.wang.extension.ui.ConfigUiAction" class="blog.dekun.wang.extension.ui.ConfigUiAction"/>
-            <separator/>
+            <action id="blog.dekun.wang.extension.action.ConfigUiAction" class="blog.dekun.wang.extension.action.ConfigUiAction"/>
             <separator/>
         </group>
     </actions>
