@@ -2,6 +2,7 @@ package blog.dekun.wang.extension.action
 
 import blog.dekun.wang.extension.action.base.BaseAnAction
 import blog.dekun.wang.extension.services.UnregisterActionService
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 
 
@@ -19,7 +20,9 @@ class ListenerAction : BaseAnAction() {
     override fun update(event: AnActionEvent) {
         event.presentation.text = "监控AnAction"
         if (UnregisterActionService.isEnableNotify()) {
-            event.presentation.text = "监控AnAction(已开启)"
+            event.presentation.icon = AllIcons.General.InspectionsOKEmpty
+        } else {
+            event.presentation.icon = AllIcons.Actions.Close
         }
     }
 

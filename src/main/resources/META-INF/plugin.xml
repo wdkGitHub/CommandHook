@@ -21,30 +21,30 @@
         <action id="blog.dekun.wang.terminal" class="blog.dekun.wang.extension.action.TerminalAction" icon="Icons.TERMINAL_ICON">
             <add-to-group group-id="WelcomeScreenRecentProjectActionGroup" anchor="after" relative-to-action="WelcomeScreen.RevealIn"/>
         </action>
-        <action id="blog.dekun.wang.git.open" class="blog.dekun.wang.extension.action.git.GitOpenAction">
+        <action id="blog.dekun.wang.git.open" class="blog.dekun.wang.extension.action.git.GitOpenAction" icon="AllIcons.Javaee.WebService">
             <add-to-group group-id="WelcomeScreenRecentProjectActionGroup" anchor="after" relative-to-action="blog.dekun.wang.terminal"/>
         </action>
-        <action id="blog.dekun.wang.fork" class="blog.dekun.wang.extension.action.git.ForkAction">
+        <action id="blog.dekun.wang.fork" class="blog.dekun.wang.extension.action.git.ForkAction" icon="Icons.FORK">
             <add-to-group group-id="WelcomeScreenRecentProjectActionGroup" anchor="after" relative-to-action="blog.dekun.wang.git.open"/>
         </action>
-        <action id="blog.dekun.wang.sourcetree" class="blog.dekun.wang.extension.action.git.SourcetreeAction">
+        <action id="blog.dekun.wang.sourcetree" class="blog.dekun.wang.extension.action.git.SourcetreeAction" icon="Icons.SOURCETREE">
             <add-to-group group-id="WelcomeScreenRecentProjectActionGroup" anchor="after" relative-to-action="blog.dekun.wang.fork"/>
         </action>
         <!--</editor-fold>-->
-        <action id="blog.dekun.wang.Typora" class="blog.dekun.wang.extension.action.TyporaAction">
+        <action id="blog.dekun.wang.Typora" class="blog.dekun.wang.extension.action.TyporaAction" icon="Icons.MARKDOWN">
             <add-to-group group-id="RunContextPopupGroup" anchor="before" relative-to-action="OpenInBrowserGroup"/>
         </action>
-        <action id="blog.dekun.wang.ITerm2" class="blog.dekun.wang.extension.action.TerminalAction">
+        <action id="blog.dekun.wang.ITerm2" class="blog.dekun.wang.extension.action.TerminalAction" icon="Icons.TERMINAL_ICON">
             <add-to-group group-id="RunContextPopupGroup" anchor="after" relative-to-action="blog.dekun.wang.Typora"/>
             <add-to-group group-id="MainToolbarRight" anchor="before" relative-to-action="ExecutionTargetsToolbarGroup"/>
         </action>
-        <action id="blog.dekun.wang.ForkAppProject" class="blog.dekun.wang.extension.action.git.ForkAction">
+        <action id="blog.dekun.wang.ForkAppProject" class="blog.dekun.wang.extension.action.git.ForkAction" icon="Icons.FORK">
             <add-to-group group-id="RunContextPopupGroup" anchor="after" relative-to-action="blog.dekun.wang.ITerm2"/>
         </action>
-        <action id="blog.dekun.wang.SourcetreeAppProject" class="blog.dekun.wang.extension.action.git.SourcetreeAction">
+        <action id="blog.dekun.wang.SourcetreeAppProject" class="blog.dekun.wang.extension.action.git.SourcetreeAction" icon="Icons.SOURCETREE">
             <add-to-group group-id="RunContextPopupGroup" anchor="after" relative-to-action="blog.dekun.wang.ForkAppProject"/>
         </action>
-        <action id="blog.dekun.wang.GitOpenProject" class="blog.dekun.wang.extension.action.git.GitOpenAction">
+        <action id="blog.dekun.wang.GitOpenProject" class="blog.dekun.wang.extension.action.git.GitOpenAction" icon="AllIcons.Javaee.WebService">
             <add-to-group group-id="RunContextPopupGroup" anchor="after" relative-to-action="blog.dekun.wang.SourcetreeAppProject"/>
         </action>
         <!--      TEST  -->
@@ -56,13 +56,13 @@
         <!--                <add-to-group group-id="ToolsMenu" anchor="after" relative-to-action="PublishGroup"/>-->
         <!--            </action>-->
         <!--        </group>-->
-        <group id="CommandExtensions" popup="true">
+        <group id="CommandExtensions" popup="true" icon="ExternalSystemIcons.Task">
             <action id="blog.dekun.wang.extension.action.ListenerAction" class="blog.dekun.wang.extension.action.ListenerAction"/>
-            <action id="blog.dekun.wang.extension.action.UnregisterAction" class="blog.dekun.wang.extension.action.UnregisterAction"/>
+            <action id="blog.dekun.wang.extension.action.UnregisterAction" class="blog.dekun.wang.extension.action.UnregisterAction" icon="ExternalSystemIcons.Task"/>
             <separator/>
             <!--  group 测试中-->
             <add-to-group group-id="MainToolbarRight" anchor="before" relative-to-action="ExecutionTargetsToolbarGroup"/>
-            <action id="blog.dekun.wang.extension.action.ConfigUiAction" class="blog.dekun.wang.extension.action.ConfigUiAction"/>
+            <action id="blog.dekun.wang.extension.action.ConfigUiAction" class="blog.dekun.wang.extension.action.ConfigUiAction" icon="ExternalSystemIcons.Task"/>
             <separator/>
         </group>
     </actions>

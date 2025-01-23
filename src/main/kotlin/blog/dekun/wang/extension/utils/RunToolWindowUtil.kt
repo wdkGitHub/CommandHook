@@ -64,7 +64,7 @@ object RunToolWindowUtil {
 
             stopButton.addActionListener {
                 processHandler.destroyProcess()
-                stopButton.isVisible = false
+                stopButton.icon = AllIcons.Debugger.Db_invalid_breakpoint
             }
             buttonPanel.add(stopButton)
             // 创建包含控制台和停止按钮的面板

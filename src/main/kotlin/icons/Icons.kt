@@ -17,8 +17,9 @@ object Icons {
     val MARKDOWN: Icon = getIcon("/icons/markdown.png", Icons::class.java)
 
     @JvmField
-    val FORK: Icon = getIcon("/icons/fork.png", Icons::class.java)
+    val FORK: Icon = getIcon("/icons/fork.svg", Icons::class.java)
 
     @JvmField
-    val SOURCETREE: Icon = getIcon("/icons/sourcetree.png", Icons::class.java)
+    val SOURCETREE: Icon = getIcon("/icons/sourcetree.svg", Icons::class.java)
+    
 }
