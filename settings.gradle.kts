@@ -6,4 +6,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "OwnExtension"
+rootProject.name = providers.gradleProperty("plugin.name").get()
