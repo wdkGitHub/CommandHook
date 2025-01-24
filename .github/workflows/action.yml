@@ -28,6 +28,7 @@ jobs:
             -   name: "检测是否手动触发或版本变更"
                 id: check-trigger
                 run: |
+                    set -e
                     if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
                         echo "MANUAL_TRIGGER=true" >> $GITHUB_ENV
                         echo "PLUGIN_VERSION_CHANGED=true" >> $GITHUB_ENV
@@ -57,6 +58,7 @@ jobs:
             -   name: "解析环境变量"
                 id: set-env-vars
                 run: |
+                    set -e
                     export PLUGIN_NAME=$(awk -F= '/plugin.name/{print $2}' gradle.properties | tr -d ' \r\n')
                     export PLUGIN_VERSION=$(awk -F= '/plugin.version/{print $2}' gradle.properties | tr -d ' \r\n')
                     export PLUGIN_VENDOR_EMAIL=$(awk -F= '/plugin.vendor.email/{print $2}' gradle.properties | tr -d ' \r\n')
@@ -72,27 +74,32 @@ jobs:
                 if: env.PLUGIN_VERSION_CHANGED == 'true'
                 run: |
                     set -e
-                    ./gradlew buildPlugin updatePluginXml --info --stacktrace \
+                    ./gradlew updatePluginXml  \
                         -Purl=https://github.com/${{ github.repository }}/releases/download/v${{ env.NEW_PLUGIN_VERSION }}/${{ env.PLUGIN_NAME }}-${{ env.NEW_PLUGIN_VERSION }}.zip
 
             -   name: "提交版本变更"
                 if: env.PLUGIN_VERSION_CHANGED == 'true'
                 run: |
+                    set -e
                     git config --global user.name "${{ env.GIT_USER_NAME }}"
                     git config --global user.email "${{ env.PLUGIN_VENDOR_EMAIL }}"
                     git diff --quiet || (git add . && git commit -m "🔖 发布版本 ${{ env.NEW_PLUGIN_VERSION }}")
 
-            -   name: "创建 Git Tag"
+            -   name: "清理 Git Tag"
                 if: env.PLUGIN_VERSION_CHANGED == 'true'
                 run: |
+                    set -e
                     git fetch --tags
                     if git tag | grep -q "v${{ env.NEW_PLUGIN_VERSION }}"; then
                         echo "标签 v${{ env.NEW_PLUGIN_VERSION }} 已存在，本地删除..."
                         git tag -d "v${{ env.NEW_PLUGIN_VERSION }}"
                         git push origin --delete "v${{ env.NEW_PLUGIN_VERSION }}"
                     fi
-                    git tag -a "v${{ env.NEW_PLUGIN_VERSION }}" -m "Version ${{ env.NEW_PLUGIN_VERSION }}"
-
+            -   name: "构建插件"
+                if: env.PLUGIN_VERSION_CHANGED == 'true'
+                run: |
+                    set -e
+                    ./gradlew buildPlugin updatePluginXml --info --stacktrace
             -   name: "发布版本"
                 if: env.PLUGIN_VERSION_CHANGED == 'true'
                 uses: softprops/action-gh-release@v2
@@ -103,7 +110,8 @@ jobs:
                     files: build/distributions/${{ env.PLUGIN_NAME }}-${{ env.NEW_PLUGIN_VERSION }}.zip
                     prerelease: ${{ startsWith(env.NEW_PLUGIN_VERSION, 'SNAPSHOT') }}
 
-            -   name: "推送提交或标签"
+            -   name: "推送提交"
                 if: env.PLUGIN_VERSION_CHANGED == 'true'
                 run: |
-                    git push origin ${{ env.BRANCH_NAME }} --tags || echo "没有需要推送的信息"
+                    set -e
+                    git push origin ${{ env.BRANCH_NAME }} || echo "没有需要推送的信息"
