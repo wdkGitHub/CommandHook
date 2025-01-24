@@ -44,6 +44,7 @@
         </action>
         <action id="blog.dekun.wang.SourcetreeAppProject" class="blog.dekun.wang.command.hook.action.git.SourcetreeAction" icon="Icons.SOURCETREE">
             <add-to-group group-id="RunContextPopupGroup" anchor="after" relative-to-action="blog.dekun.wang.ForkAppProject"/>
+            <add-to-group group-id="MainToolbarLeft"/>
         </action>
         <action id="blog.dekun.wang.GitOpenProject" class="blog.dekun.wang.command.hook.action.git.GitOpenAction" icon="AllIcons.Javaee.WebService">
             <add-to-group group-id="RunContextPopupGroup" anchor="after" relative-to-action="blog.dekun.wang.SourcetreeAppProject"/>
