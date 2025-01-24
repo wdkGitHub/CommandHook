@@ -9,7 +9,7 @@
         <notificationGroup id="AnActionIdNotificationGroup" displayType="BALLOON"/>
 
         <postStartupActivity implementation="blog.dekun.wang.command.hook.startup.Startup"/>
-        <applicationConfigurable id="blog.dekun.wang.command.hook.ui.ConfigConfigurable" instance="blog.dekun.wang.command.hook.ui.ConfigConfigurable" displayName=""/>
+        <!--  会在设置页面增加内容      <applicationConfigurable id="blog.dekun.wang.command.hook.ui.ConfigConfigurable" instance="blog.dekun.wang.command.hook.ui.ConfigConfigurable" displayName=""/>-->
         <!--     UI   测试-->
         <!--        <toolWindow id="ConfigToolWindow" factoryClass="blog.dekun.wang.command.hook.test.ConfigToolWindowFactory" anchor="bottom" canCloseContents="true"/>-->
     </extensions>
