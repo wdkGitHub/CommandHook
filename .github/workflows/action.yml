@@ -73,7 +73,7 @@ jobs:
                 run: |
                     set -e
                     ./gradlew buildPlugin updatePluginXml --info --stacktrace \
-                        -Purl=https://github.com/${{ github.repository }}/releases/download/${{ env.NEW_PLUGIN_VERSION }}/${{ env.PLUGIN_NAME }}-${{ env.NEW_PLUGIN_VERSION }}.zip
+                        -Purl=https://github.com/${{ github.repository }}/releases/download/v${{ env.NEW_PLUGIN_VERSION }}/${{ env.PLUGIN_NAME }}-${{ env.NEW_PLUGIN_VERSION }}.zip
 
             -   name: "提交版本变更"
                 if: env.PLUGIN_VERSION_CHANGED == 'true'
