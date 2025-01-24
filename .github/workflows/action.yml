@@ -70,7 +70,7 @@ jobs:
                         echo "NEW_PLUGIN_VERSION=${PLUGIN_VERSION}" >> $GITHUB_ENV
                     fi
 
-            -   name: "构建和发布插件"
+            -   name: "版本变更"
                 if: env.PLUGIN_VERSION_CHANGED == 'true'
                 run: |
                     set -e
@@ -84,7 +84,8 @@ jobs:
                     git config --global user.name "${{ env.GIT_USER_NAME }}"
                     git config --global user.email "${{ env.PLUGIN_VENDOR_EMAIL }}"
                     git diff --quiet || (git add . && git commit -m "发布版本 ${{ env.NEW_PLUGIN_VERSION }}")
-
+                    echo "COMMIT_SHA=$(git rev-parse master)" >> $GITHUB_ENV
+                    git push origin ${{ env.BRANCH_NAME }} || echo "没有需要推送的信息"
             -   name: "清理 Git Tag"
                 if: env.PLUGIN_VERSION_CHANGED == 'true'
                 run: |
@@ -99,7 +100,9 @@ jobs:
                 if: env.PLUGIN_VERSION_CHANGED == 'true'
                 run: |
                     set -e
-                    ./gradlew buildPlugin updatePluginXml --info --stacktrace
+                    git log --oneline -5
+                    git symbolic-ref --short HEAD
+                    ./gradlew buildPlugin --info --stacktrace
             -   name: "发布版本"
                 if: env.PLUGIN_VERSION_CHANGED == 'true'
                 uses: softprops/action-gh-release@v2
@@ -109,9 +112,5 @@ jobs:
                     body: "发布版本 ${{ env.NEW_PLUGIN_VERSION }}"
                     files: build/distributions/${{ env.PLUGIN_NAME }}-${{ env.NEW_PLUGIN_VERSION }}.zip
                     prerelease: ${{ startsWith(env.NEW_PLUGIN_VERSION, 'SNAPSHOT') }}
-
-            -   name: "推送提交"
-                if: env.PLUGIN_VERSION_CHANGED == 'true'
-                run: |
-                    set -e
-                    git push origin ${{ env.BRANCH_NAME }} || echo "没有需要推送的信息"
+                    draft: false
+                    target_commitish: ${{ env.COMMIT_SHA }}
