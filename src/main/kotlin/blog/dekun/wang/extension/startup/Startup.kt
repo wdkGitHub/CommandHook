@@ -24,3 +24,21 @@ class Startup : ProjectActivity {
 
     }
 }
+
+//        val actionManager = ActionManager.getInstance()
+//        val actionIdList = actionManager.getActionIdList("")
+//        actionIdList.forEach { id ->
+//            actionManager.getAction(id)?.let { action ->
+//                if (action is DefaultActionGroup) {
+//                    action.getChildren(null).forEach {
+//                        if (it.javaClass.name.contains("ai.codegeex.plugin.actions")) {
+////                                        println("actionId = ${it.javaClass.name}")
+//                            //ai.codegeex.plugin.actions.ProjectMapTitleAction
+//                            if (it.javaClass.name.contains("ai.codegeex.plugin.actions.ProjectMapTitleAction")) {
+//                                action.remove(it)
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }

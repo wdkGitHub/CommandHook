@@ -65,6 +65,10 @@ class Utils {
          */
         fun getGitRepoRootPath(event: AnActionEvent): String? {
             val virtualFile = event.getData(PlatformDataKeys.VIRTUAL_FILE) ?: return null
+            if (virtualFile.fileSystem.protocol != "file") {
+//                println("Not a file system path: ${virtualFile.fileSystem.protocol} ${virtualFile.path}")
+                return null
+            }
             val path: String = if (virtualFile.isDirectory) {
                 virtualFile.path
             } else {

@@ -18,7 +18,7 @@ import com.intellij.openapi.actionSystem.ex.AnActionListener
 class GlobalActionListener : AnActionListener {
 
     override fun beforeActionPerformed(action: AnAction, event: AnActionEvent) {
-        if (UnregisterActionService.isEnableNotify()) {
+        if (UnregisterActionService.isEnableNotify() && !action.javaClass.name.contains("dekun.wang")) {
             val actionId = ActionManager.getInstance().getId(action)
             val actionName = action.templatePresentation.text
             val message = """
