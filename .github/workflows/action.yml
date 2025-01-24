@@ -83,7 +83,7 @@ jobs:
                     set -e
                     git config --global user.name "${{ env.GIT_USER_NAME }}"
                     git config --global user.email "${{ env.PLUGIN_VENDOR_EMAIL }}"
-                    git diff --quiet || (git add . && git commit -m "🔖 发布版本 ${{ env.NEW_PLUGIN_VERSION }}")
+                    git diff --quiet || (git add . && git commit -m "发布版本 ${{ env.NEW_PLUGIN_VERSION }}")
 
             -   name: "清理 Git Tag"
                 if: env.PLUGIN_VERSION_CHANGED == 'true'
@@ -106,7 +106,7 @@ jobs:
                 with:
                     tag_name: "v${{ env.NEW_PLUGIN_VERSION }}"
                     name: "v${{ env.NEW_PLUGIN_VERSION }}"
-                    body: "🔖 发布版本 ${{ env.NEW_PLUGIN_VERSION }}"
+                    body: "发布版本 ${{ env.NEW_PLUGIN_VERSION }}"
                     files: build/distributions/${{ env.PLUGIN_NAME }}-${{ env.NEW_PLUGIN_VERSION }}.zip
                     prerelease: ${{ startsWith(env.NEW_PLUGIN_VERSION, 'SNAPSHOT') }}
 
