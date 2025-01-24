@@ -39,12 +39,13 @@ kotlin {
     }
 }
 tasks {
+    val homeDir = System.getenv("HOME")
     runIde {
         jvmArgumentProviders += CommandLineArgumentProvider {
             listOf(
                 "--add-opens=java.base/jdk.internal.org.objectweb.asm=ALL-UNNAMED",
                 "--add-opens=java.base/jdk.internal.org.objectweb.asm.tree=ALL-UNNAMED",
-                "-javaagent:/Users/wdk/Software-config/ja-netfilter-all/jetbra/ja-netfilter.jar=jetbrains"
+                "-javaagent:${homeDir}/Software-config/ja-netfilter-all/jetbra/ja-netfilter.jar=jetbrains"
             )
         }
     }
@@ -71,9 +72,9 @@ intellijPlatform {
 // 自定义插件仓库文档
 dependencies {
     intellijPlatform {
-//        intellijIdeaCommunity("2024.3.1")
-        intellijIdeaUltimate("2024.3.1")
         version = providers.gradleProperty("plugin.version").get()
+        intellijIdeaUltimate("2024.3.1")
+//        intellijIdeaCommunity("2024.3.1")
 //        bundledPlugin("com.jetbrains.plugins.webDeployment")
 //        bundledPlugin("Git4Idea")
 //        bundledPlugin("org.jetbrains.idea.maven")
