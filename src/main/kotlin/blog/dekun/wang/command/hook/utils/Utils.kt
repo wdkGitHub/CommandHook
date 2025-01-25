@@ -1,13 +1,13 @@
 package blog.dekun.wang.command.hook.utils
 
 import blog.dekun.wang.command.hook.command.Command
+import blog.dekun.wang.command.hook.constants.Constant
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataKey
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vfs.VirtualFile
 
 /**
@@ -32,12 +32,12 @@ class Utils {
          * @see com.intellij.openapi.wm.impl.welcomeScreen.projectActions.RecentProjectsWelcomeScreenActionBase
          */
         fun isRecentProjectItem(event: AnActionEvent): Boolean {
-            val recentProjectSelectedItem = event.getData(DataKey.create<Any>(blog.dekun.wang.command.hook.utils.Utils.Companion.RECENT_PROJECT_SELECTED_ITEM))
+            val recentProjectSelectedItem = event.getData(DataKey.create<Any>(RECENT_PROJECT_SELECTED_ITEM))
             return recentProjectSelectedItem != null && recentProjectSelectedItem::class.java.simpleName == "RecentProjectItem"
         }
 
         fun getProjectPath(event: AnActionEvent): String? {
-            val recentProjectSelectedItem = event.getData(DataKey.create<Any>(blog.dekun.wang.command.hook.utils.Utils.Companion.RECENT_PROJECT_SELECTED_ITEM)) ?: return null
+            val recentProjectSelectedItem = event.getData(DataKey.create<Any>(RECENT_PROJECT_SELECTED_ITEM)) ?: return null
             val projectPathField = recentProjectSelectedItem::class.java.getField("projectPath")
             return projectPathField[recentProjectSelectedItem].toString()
         }
@@ -65,7 +65,7 @@ class Utils {
         fun getGitRepoRootPath(event: AnActionEvent): String? {
             val virtualFile = event.getData(PlatformDataKeys.VIRTUAL_FILE) ?: return null
             if (virtualFile.fileSystem.protocol != "file") {
-//                println("Not a file system path: ${virtualFile.fileSystem.protocol} ${virtualFile.path}")
+                println("Not a file system path: ${virtualFile.fileSystem.protocol} ${virtualFile.path}")
                 return null
             }
             val path: String = if (virtualFile.isDirectory) {
@@ -97,14 +97,14 @@ class Utils {
 
 
         fun showNotification(project: Project?, title: String, content: String, type: NotificationType) {
-            NotificationGroupManager.getInstance().getNotificationGroup(blog.dekun.wang.command.hook.constants.Constant.NOTIFICATION_GROUP_ID)
+            NotificationGroupManager.getInstance().getNotificationGroup(Constant.NOTIFICATION_GROUP_ID)
                 .createNotification(title, content, type).notify(project)
         }
 
-        fun showNotificationAnActionId(title: String, content: String) {
-            NotificationGroupManager.getInstance().getNotificationGroup(blog.dekun.wang.command.hook.constants.Constant.NOTIFICATION_GROUP_AN_ACTION_ID)
+        fun showNotificationAnActionId(project: Project?, title: String, content: String) {
+            NotificationGroupManager.getInstance().getNotificationGroup(Constant.NOTIFICATION_GROUP_AN_ACTION_ID)
                 .createNotification(title, content, NotificationType.INFORMATION)
-                .notify(ProjectManager.getInstance().openProjects.firstOrNull())
+                .notify(project)
         }
     }
 }

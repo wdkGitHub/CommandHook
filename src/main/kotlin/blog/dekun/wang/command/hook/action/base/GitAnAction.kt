@@ -2,9 +2,11 @@ package blog.dekun.wang.command.hook.action.base
 
 import blog.dekun.wang.command.hook.command.Command
 import blog.dekun.wang.command.hook.constants.CommandType
+import blog.dekun.wang.command.hook.constants.Constant
+import blog.dekun.wang.command.hook.utils.Utils
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
-
+import com.intellij.openapi.actionSystem.CommonDataKeys
 
 /**
  *
@@ -20,18 +22,25 @@ abstract class GitAnAction : WelcomeScreen, BaseAnAction() {
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
     fun setEnableVisible(event: AnActionEvent, checkRemote: Boolean = false) {
         super.enableVisible(event) {
-            val gitRepoRootPath = if (event.place == blog.dekun.wang.command.hook.constants.Constant.WELCOME_SCREEN) {
-                blog.dekun.wang.command.hook.utils.Utils.getProjectPath(event)
+            println(event.place)
+            val gitRepoRootPath = if (event.place == Constant.WELCOME_SCREEN) {
+                Utils.getProjectPath(event)
+            } else if (event.place == "Vcs.Push.ContextMenu") {
+                event.getData(CommonDataKeys.PROJECT)?.basePath
             } else {
-                blog.dekun.wang.command.hook.utils.Utils.getGitRepoRootPath(event)
+                Utils.getGitRepoRootPath(event)
             }
-            blog.dekun.wang.command.hook.utils.Utils.isGitRepo(gitRepoRootPath) && (!checkRemote || blog.dekun.wang.command.hook.utils.Utils.hasGitRemote(gitRepoRootPath))
+            Utils.isGitRepo(gitRepoRootPath) && (!checkRemote || Utils.hasGitRemote(gitRepoRootPath))
         }
     }
 
     fun executeGitCommand(event: AnActionEvent, commandType: CommandType) {
         execute(event, commandType) {
-            blog.dekun.wang.command.hook.utils.Utils.getGitRepoRootPath(event)?.let { Command.build().execute(it, commandType) }
+            if (event.place == "Vcs.Push.ContextMenu") {
+                event.getData(CommonDataKeys.PROJECT)?.basePath?.let { path -> Command.build().execute(path, commandType) }
+            } else {
+                Utils.getGitRepoRootPath(event)?.let { Command.build().execute(it, commandType) }
+            }
         }
     }
 }

@@ -4,6 +4,8 @@ import blog.dekun.wang.command.hook.action.base.BaseAnAction
 import blog.dekun.wang.command.hook.action.base.WelcomeScreen
 import blog.dekun.wang.command.hook.command.Command
 import blog.dekun.wang.command.hook.constants.CommandType
+import blog.dekun.wang.command.hook.constants.Constant
+import blog.dekun.wang.command.hook.utils.Utils
 import com.intellij.openapi.actionSystem.AnActionEvent
 
 
@@ -20,7 +22,7 @@ class TerminalAction : BaseAnAction(), WelcomeScreen {
 
     override fun update(event: AnActionEvent) {
         enableVisible(event) { true }
-        if (event.place == blog.dekun.wang.command.hook.constants.Constant.WELCOME_SCREEN) {
+        if (event.place == Constant.WELCOME_SCREEN) {
             event.presentation.text = "Reveal In Terminal"
         } else {
             event.presentation.text = "Reveal In Terminal"
@@ -29,7 +31,7 @@ class TerminalAction : BaseAnAction(), WelcomeScreen {
 
     override fun actionPerformed(event: AnActionEvent) {
         execute(event, CommandType.TERMINAL_APP) {
-            blog.dekun.wang.command.hook.utils.Utils.getVirtualFile(event)?.let { virtualFile ->
+            Utils.getVirtualFile(event)?.let { virtualFile ->
                 val path = virtualFile.takeIf { it.isDirectory }?.path
                     ?: virtualFile.parent?.path
                     ?: event.project?.basePath
