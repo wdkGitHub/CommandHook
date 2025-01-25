@@ -3,6 +3,7 @@ package blog.dekun.wang.command.hook.ui
 import blog.dekun.wang.command.hook.action.CustomCommandAction
 import blog.dekun.wang.command.hook.data.ConfigInfo
 import blog.dekun.wang.command.hook.services.ServiceUtils
+import blog.dekun.wang.command.hook.utils.Utils
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.project.Project
@@ -175,7 +176,7 @@ class ConfigConfigurable : Configurable {
             ServiceUtils.saveConfigInfoList(project, currentDataSort)
         }
         leftItemList.clear()
-        blog.dekun.wang.command.hook.utils.Utils.showNotification(project, "配置保存成功", "配置保存成功", NotificationType.INFORMATION)
+        Utils.showNotification(project, "配置保存成功", "配置保存成功", NotificationType.INFORMATION)
     }
 
     override fun getDisplayName(): String {

@@ -1,6 +1,7 @@
 package blog.dekun.wang.command.hook.listener
 
 import blog.dekun.wang.command.hook.services.UnregisterActionService
+import blog.dekun.wang.command.hook.utils.Utils
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.AnActionListener
 
@@ -30,7 +31,7 @@ class GlobalActionListener : AnActionListener {
             GroupId = $groupId <br>
             Class = ${action.javaClass.name}
             """.trimIndent()
-            blog.dekun.wang.command.hook.utils.Utils.showNotificationAnActionId(event.project, "AnActionIdNotificationGroup", message)
+            Utils.showNotificationAnActionId(event.project, "AnActionIdNotificationGroup", message)
         }
     }
 

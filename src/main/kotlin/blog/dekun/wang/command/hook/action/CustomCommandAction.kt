@@ -1,8 +1,10 @@
 package blog.dekun.wang.command.hook.action
 
 import blog.dekun.wang.command.hook.action.base.BaseAnAction
+import blog.dekun.wang.command.hook.constants.Constant
 import blog.dekun.wang.command.hook.data.ConfigInfo
 import blog.dekun.wang.command.hook.utils.RunToolWindowUtil
+import blog.dekun.wang.command.hook.utils.Utils
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionUpdateThread
@@ -45,7 +47,7 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
 
         private fun getActionId(name: String, isRightClick: Boolean): String {
             val groupId =
-                if (isRightClick) blog.dekun.wang.command.hook.constants.Constant.ACTION_GROUP_ID_RIGHT_CLICK else blog.dekun.wang.command.hook.constants.Constant.ACTION_GROUP_ID
+                if (isRightClick) Constant.ACTION_GROUP_ID_RIGHT_CLICK else Constant.ACTION_GROUP_ID
             return "$groupId.$name"
         }
 
@@ -63,7 +65,7 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
                 val configInfoMainToolbarRight = config.takeIf { it.isRightClick != true } ?: config.copy().apply { isRightClick = false }
                 val action = CustomCommandAction(configInfoMainToolbarRight)
                 actionManager.registerAction(actionId, action)
-                val commandExtensions = actionManager.getAction(blog.dekun.wang.command.hook.constants.Constant.ACTION_GROUP_ID)
+                val commandExtensions = actionManager.getAction(Constant.ACTION_GROUP_ID)
                 if (commandExtensions is DefaultActionGroup) {
                     commandExtensions.add(action)
                 }
@@ -79,14 +81,14 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
             }
             getActionId(config).forEach { actionId ->
                 when {
-                    actionId.startsWith(blog.dekun.wang.command.hook.constants.Constant.ACTION_GROUP_ID) -> remove(
+                    actionId.startsWith(Constant.ACTION_GROUP_ID) -> remove(
                         actionId,
-                        blog.dekun.wang.command.hook.constants.Constant.ACTION_GROUP_ID
+                        Constant.ACTION_GROUP_ID
                     )
 
-                    actionId.startsWith(blog.dekun.wang.command.hook.constants.Constant.ACTION_GROUP_ID_RIGHT_CLICK) -> remove(
+                    actionId.startsWith(Constant.ACTION_GROUP_ID_RIGHT_CLICK) -> remove(
                         actionId,
-                        blog.dekun.wang.command.hook.constants.Constant.ACTION_GROUP_ID_RIGHT_CLICK
+                        Constant.ACTION_GROUP_ID_RIGHT_CLICK
                     )
                 }
             }
@@ -103,7 +105,7 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
             event.presentation.isEnabledAndVisible = false
             return
         }
-        val virtualFile = blog.dekun.wang.command.hook.utils.Utils.getVirtualFile(event)
+        val virtualFile = Utils.getVirtualFile(event)
         val isEnabled = configInfo.isEnable == true
         event.presentation.isEnabledAndVisible = when {
             virtualFile == null || configInfo.isRightClick != true -> isEnabled
@@ -118,7 +120,7 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
         val regex = Regex("@(\\S+)")
         var commandStr = configInfo.commandStr?.trim()
         if (commandStr.isNullOrEmpty()) {
-            blog.dekun.wang.command.hook.utils.Utils.showNotification(event.project, configInfo.name, "commandStr is empty", NotificationType.ERROR)
+            Utils.showNotification(event.project, configInfo.name, "commandStr is empty", NotificationType.ERROR)
             return
         }
         commandStr = regex.replace(commandStr) { matchResult ->
@@ -129,7 +131,7 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
             value
         }
         if (configInfo.isTargetFile == true || configInfo.isTargetFolder == true) {
-            val virtualFile = blog.dekun.wang.command.hook.utils.Utils.getVirtualFile(event)
+            val virtualFile = Utils.getVirtualFile(event)
             if (virtualFile != null) {
                 val path = configInfo.executionDir?.takeIf { it.isNotBlank() } ?: if (virtualFile.isDirectory) virtualFile.path.substringBeforeLast("/")
                 else virtualFile.path
