@@ -1,5 +1,6 @@
 package blog.dekun.wang.command.hook.services
 
+import blog.dekun.wang.command.hook.constants.Constant
 import blog.dekun.wang.command.hook.data.ConfigInfo
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
@@ -17,7 +18,7 @@ import com.intellij.openapi.components.Storage
  */
 
 @Service(Service.Level.APP)
-@State(name = blog.dekun.wang.command.hook.constants.Constant.STATE_NAME, storages = [(Storage(value = blog.dekun.wang.command.hook.constants.Constant.APP_CONFIG_XML_FILE_NAME))])
+@State(name = Constant.STATE_NAME, storages = [(Storage(value = Constant.APP_CONFIG_XML_FILE_NAME))])
 class AppConfigService : PersistentStateComponent<AppConfigService.State> {
 
     // 定义状态类

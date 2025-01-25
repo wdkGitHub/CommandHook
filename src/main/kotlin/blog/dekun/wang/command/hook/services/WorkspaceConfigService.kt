@@ -1,5 +1,6 @@
 package blog.dekun.wang.command.hook.services
 
+import blog.dekun.wang.command.hook.constants.Constant
 import blog.dekun.wang.command.hook.data.ConfigInfo
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.Service
@@ -17,10 +18,7 @@ import com.intellij.openapi.project.Project
  */
 
 @Service(Service.Level.PROJECT)
-@State(
-    name = blog.dekun.wang.command.hook.constants.Constant.STATE_NAME,
-    storages = [(Storage(value = blog.dekun.wang.command.hook.constants.Constant.WORKSPACE_CONFIG_XML_FILE_NAME))]
-)
+@State(name = Constant.STATE_NAME, storages = [(Storage(value = Constant.WORKSPACE_CONFIG_XML_FILE_NAME))])
 class WorkspaceConfigService : PersistentStateComponent<WorkspaceConfigService.State> {
 
     data class State(var commands: MutableList<ConfigInfo> = mutableListOf())

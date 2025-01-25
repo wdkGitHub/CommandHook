@@ -1,9 +1,12 @@
 package blog.dekun.wang.command.hook.services
 
 import blog.dekun.wang.command.hook.action.CustomCommandAction
+import blog.dekun.wang.command.hook.constants.Constant
 import blog.dekun.wang.command.hook.data.ConfigInfo
 import com.intellij.ide.projectView.impl.ProjectViewState
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.updateSettings.impl.UpdateSettings
 
 
 /**
@@ -70,6 +73,10 @@ class ServiceUtils {
                 projectViewStateService.openDirectoriesWithSingleClick = true
                 projectViewStateService.state
             }
+        }
+        fun setUpdateRepositoryAddress() {
+            ApplicationManager.getApplication().getService(UpdateSettings::class.java).state.pluginHosts
+                .takeIf { !it.contains(Constant.PLUGIN_HOSTS) }?.add(Constant.PLUGIN_HOSTS)
         }
     }
 }

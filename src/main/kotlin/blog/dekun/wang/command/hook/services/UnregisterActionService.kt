@@ -1,5 +1,6 @@
 package blog.dekun.wang.command.hook.services
 
+import blog.dekun.wang.command.hook.constants.Constant
 import blog.dekun.wang.command.hook.data.UnregisterActionConfig
 import blog.dekun.wang.command.hook.data.UnregisterActions
 import com.intellij.openapi.actionSystem.ActionManager
@@ -18,10 +19,7 @@ import com.intellij.openapi.components.Storage
  */
 
 @Service(Service.Level.APP)
-@State(
-    name = blog.dekun.wang.command.hook.constants.Constant.NOTIFICATION_GROUP_AN_ACTION_ID,
-    storages = [(Storage(value = blog.dekun.wang.command.hook.constants.Constant.APP_CONFIG_XML_FILE_NAME))]
-)
+@State(name = Constant.NOTIFICATION_GROUP_AN_ACTION_ID, storages = [(Storage(value = Constant.APP_CONFIG_XML_FILE_NAME))])
 class UnregisterActionService : PersistentStateComponent<UnregisterActionConfig> {
 
     private var unregisterActionConfig: UnregisterActionConfig = UnregisterActionConfig()
