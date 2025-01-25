@@ -124,6 +124,7 @@ tasks.register("updatePluginXml") {
         for (pluginNode in rootElement.getChildren("plugin")) {
             if (pluginNode.getChildText("version") == nowVersion || pluginNode.getChildText("version").contains("SNAPSHOT")) {
                 pluginNode.apply {
+                    getChild("version").text = nowVersion
                     getChild("name").text = pluginName
                     getChild("vendor").apply {
                         content.clear()
