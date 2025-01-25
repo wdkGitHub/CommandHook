@@ -2,6 +2,7 @@
 <idea-plugin>
     <!-- Product and plugin compatibility requirements. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
+    <depends>Git4Idea</depends>
 
     <!-- Extension points defined by the plugin. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
@@ -37,22 +38,26 @@
         <action id="blog.dekun.wang.ITerm2" class="blog.dekun.wang.command.hook.action.TerminalAction" icon="Icons.TERMINAL_ICON">
             <add-to-group group-id="RunContextPopupGroup" anchor="after" relative-to-action="blog.dekun.wang.Typora"/>
             <add-to-group group-id="MainToolbarRight" anchor="before" relative-to-action="ExecutionTargetsToolbarGroup"/>
-            <add-to-group group-id="Hg.Log.ContextMenu"/>
+            <add-to-group group-id="Vcs.Log.ContextMenu"/>
+            <add-to-group group-id="ChangesViewPopupMenu"/>
         </action>
         <action id="blog.dekun.wang.ForkAppProject" class="blog.dekun.wang.command.hook.action.git.ForkAction" icon="Icons.FORK">
             <add-to-group group-id="RunContextPopupGroup" anchor="after" relative-to-action="blog.dekun.wang.ITerm2"/>
             <add-to-group group-id="MainToolbarLeft"/>
-            <add-to-group group-id="Hg.Log.ContextMenu"/>
+            <add-to-group group-id="Vcs.Log.ContextMenu"/>
+            <add-to-group group-id="ChangesViewPopupMenu"/>
         </action>
         <action id="blog.dekun.wang.SourcetreeAppProject" class="blog.dekun.wang.command.hook.action.git.SourcetreeAction" icon="Icons.SOURCETREE">
             <add-to-group group-id="RunContextPopupGroup" anchor="after" relative-to-action="blog.dekun.wang.ForkAppProject"/>
             <add-to-group group-id="MainToolbarLeft"/>
-            <add-to-group group-id="Hg.Log.ContextMenu"/>
+            <add-to-group group-id="Vcs.Log.ContextMenu"/>
+            <add-to-group group-id="ChangesViewPopupMenu"/>
         </action>
         <action id="blog.dekun.wang.GitOpenProject" class="blog.dekun.wang.command.hook.action.git.GitOpenAction" icon="AllIcons.Javaee.WebService">
             <add-to-group group-id="RunContextPopupGroup" anchor="after" relative-to-action="blog.dekun.wang.SourcetreeAppProject"/>
             <add-to-group group-id="MainToolbarLeft"/>
-            <add-to-group group-id="Hg.Log.ContextMenu"/>
+            <add-to-group group-id="Vcs.Log.ContextMenu"/>
+            <add-to-group group-id="ChangesViewPopupMenu"/>
         </action>
         <!--      TEST  -->
 

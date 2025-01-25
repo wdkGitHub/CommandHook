@@ -73,8 +73,9 @@ intellijPlatform {
 dependencies {
     intellijPlatform {
         version = providers.gradleProperty("plugin.version").get()
-        intellijIdeaUltimate("2024.3.1")
+        intellijIdeaUltimate("2024.3.2")
         bundledPlugin("hg4idea")
+        bundledPlugin("Git4Idea")
 //        intellijIdeaCommunity("2024.3.1")
 //        bundledPlugin("com.jetbrains.plugins.webDeployment")
 //        bundledPlugin("Git4Idea")
@@ -84,7 +85,7 @@ dependencies {
 //        bundledPlugin("org.jetbrains.idea.maven.server.api")
 //        bundledPlugin("com.intellij")
 //        bundledPlugin("com.intellij.java")
-//        bundledPlugin("Git4Idea")
+
 //        bundledPlugin("org.jetbrains.plugins.gradle")
 //        bundledPlugin("org.jetbrains.idea.maven")
 
