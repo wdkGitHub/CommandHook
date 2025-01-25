@@ -116,6 +116,5 @@ jobs:
                     name: "v${{ env.NEW_PLUGIN_VERSION }}"
                     body: "发布版本 ${{ env.NEW_PLUGIN_VERSION }}"
                     files: build/distributions/${{ env.PLUGIN_NAME }}-${{ env.NEW_PLUGIN_VERSION }}.zip
-                    prerelease: ${{ startsWith(env.NEW_PLUGIN_VERSION, 'SNAPSHOT') }}
-                    draft: false
+                    prerelease: ${{ contains(env.NEW_PLUGIN_VERSION, 'SNAPSHOT') }}
                     target_commitish: ${{ env.COMMIT_SHA }}
