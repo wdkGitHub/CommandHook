@@ -96,6 +96,11 @@ jobs:
                         git tag -d "v${{ env.NEW_PLUGIN_VERSION }}"
                         git push origin --delete "v${{ env.NEW_PLUGIN_VERSION }}"
                     fi
+                    git tag | grep 'SNAPSHOT' | while read tag; do
+                      echo "发现 SNAPSHOT 标签: $tag，正在删除..."
+                      git tag -d "$tag"
+                      git push origin --delete "$tag"
+                    done
             -   name: "构建插件"
                 if: env.PLUGIN_VERSION_CHANGED == 'true'
                 run: |

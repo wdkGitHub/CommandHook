@@ -121,7 +121,7 @@ tasks.register("updatePluginXml") {
         val rootElement: Element = document.rootElement
         var pluginExists = false
         for (pluginNode in rootElement.getChildren("plugin")) {
-            if (pluginNode.getChildText("version") == nowVersion) {
+            if (pluginNode.getChildText("version") == nowVersion || pluginNode.getChildText("version").contains("SNAPSHOT")) {
                 pluginNode.apply {
                     getChild("name").text = pluginName
                     getChild("vendor").apply {
