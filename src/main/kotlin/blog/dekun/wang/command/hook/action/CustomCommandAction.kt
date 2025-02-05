@@ -117,19 +117,19 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
     }
 
     override fun actionPerformed(event: AnActionEvent) {
-        val regex = Regex("@@(\\S+)")
+//        val regex = Regex("@@(\\S+)")
         var commandStr = configInfo.commandStr?.trim()
         if (commandStr.isNullOrEmpty()) {
             Utils.showNotification(event.project, configInfo.name, "commandStr is empty", NotificationType.ERROR)
             return
         }
-        commandStr = regex.replace(commandStr) { matchResult ->
-            // 获取 @ 后的内容，例如 PATH
-            val variableName = matchResult.groupValues[1]
-            val value = System.getenv(variableName) ?: "NotFoundEnvVariable"
-            // 替换为环境变量值
-            value
-        }
+//        commandStr = regex.replace(commandStr) { matchResult ->
+//            // 获取 @ 后的内容，例如 PATH
+//            val variableName = matchResult.groupValues[1]
+//            val value = System.getenv(variableName) ?: "NotFoundEnvVariable"
+//            // 替换为环境变量值
+//            value
+//        }
         if (configInfo.isTargetFile == true || configInfo.isTargetFolder == true) {
             val virtualFile = Utils.getVirtualFile(event)
             if (virtualFile != null) {
