@@ -117,7 +117,7 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
     }
 
     override fun actionPerformed(event: AnActionEvent) {
-        val regex = Regex("@(\\S+)")
+        val regex = Regex("@@(\\S+)")
         var commandStr = configInfo.commandStr?.trim()
         if (commandStr.isNullOrEmpty()) {
             Utils.showNotification(event.project, configInfo.name, "commandStr is empty", NotificationType.ERROR)
