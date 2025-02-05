@@ -115,7 +115,7 @@ interface Command {
             if (SystemInfo.isMac) {
                 val result = execute(listOf("mdfind", "\"kMDItemCFBundleIdentifier == $mMDItemCFBundleIdentifier\""))
                 if (result.isNotEmpty()) {
-                    resultCache.put(cacheKey, result)  // 缓存结果
+                    resultCache.put(cacheKey, "true")  // 缓存结果
                     return true
                 }
             }
