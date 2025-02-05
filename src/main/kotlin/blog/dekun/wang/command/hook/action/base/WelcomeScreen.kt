@@ -5,6 +5,7 @@ import blog.dekun.wang.command.hook.constants.CommandType
 import blog.dekun.wang.command.hook.constants.Constant
 import blog.dekun.wang.command.hook.utils.Utils
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.vcs.VcsDataKeys
 import git4idea.repo.GitRepositoryManager
 
@@ -44,8 +45,9 @@ interface WelcomeScreen {
         val data = event.getData(VcsDataKeys.CHANGES_SELECTION)
         val firstFile = data?.list?.firstOrNull()?.afterRevision?.file ?: return null
 
-        val gitRepository = gitRepositoryManager.getRepositoryForFile(firstFile)
-        return gitRepository?.root?.path
+        return ReadAction.compute<String?, RuntimeException> {
+            gitRepositoryManager.getRepositoryForFile(firstFile)?.root?.path
+        }
     }
 
 }
