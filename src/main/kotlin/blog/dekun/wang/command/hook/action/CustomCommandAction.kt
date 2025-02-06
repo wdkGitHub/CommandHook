@@ -3,6 +3,7 @@ package blog.dekun.wang.command.hook.action
 import blog.dekun.wang.command.hook.action.base.BaseAnAction
 import blog.dekun.wang.command.hook.constants.Constant
 import blog.dekun.wang.command.hook.data.ConfigInfo
+import blog.dekun.wang.command.hook.services.ServiceUtils
 import blog.dekun.wang.command.hook.utils.RunToolWindowUtil
 import blog.dekun.wang.command.hook.utils.Utils
 import com.intellij.notification.NotificationType
@@ -100,6 +101,10 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
 
     override fun update(event: AnActionEvent) {
         if (event.project == null) {
+            event.presentation.isEnabledAndVisible = false
+            return
+        }
+        if (ServiceUtils.getConfigInfoList(event.project).none { it.name == configInfo.name }) {
             event.presentation.isEnabledAndVisible = false
             return
         }
