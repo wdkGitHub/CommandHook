@@ -24,6 +24,7 @@ class ConfigConfigurable(val project: Project) : Configurable {
         cellRenderer = ListCellRenderer { list, value, index, isSelected, cellHasFocus ->
             JLabel(value.name).apply {
                 isOpaque = true
+                border = BorderFactory.createEmptyBorder(0, 5, 1, 0)
                 background = if (isSelected) list.selectionBackground else list.background
                 foreground = if (isSelected) list.selectionForeground else list.foreground
             }
