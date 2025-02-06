@@ -10,7 +10,7 @@ import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.execution.ui.RunContentManager
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -22,15 +22,14 @@ import javax.swing.JPanel
 object RunToolWindowUtil {
 
 
-    fun executeWithRealTimeOutput(tabName: String, commands: List<String>, dirPath: String? = null) {
-        val resolvedProject = ProjectManager.getInstance().openProjects.firstOrNull() ?: throw IllegalStateException("No open project found!")
+    fun executeWithRealTimeOutput(project: Project, tabName: String, commands: List<String>, dirPath: String? = null) {
 
-        val consoleView: ConsoleView = TextConsoleBuilderFactory.getInstance().createBuilder(resolvedProject).console
+        val consoleView: ConsoleView = TextConsoleBuilderFactory.getInstance().createBuilder(project).console
 
         val processBuilder = ProcessBuilder(commands)
         val directory = when {
             dirPath != null -> File(dirPath)
-            resolvedProject.basePath != null -> File(resolvedProject.basePath!!)
+            project.basePath != null -> File(project.basePath!!)
             else -> File(System.getProperty("user.home"))
         }
         processBuilder.directory(directory)
@@ -78,7 +77,7 @@ object RunToolWindowUtil {
             }
 
             val executor = DefaultRunExecutor.getRunExecutorInstance()
-            RunContentManager.getInstance(resolvedProject).showRunContent(executor, descriptor)
+            RunContentManager.getInstance(project).showRunContent(executor, descriptor)
 
             processHandler.startNotify()
 

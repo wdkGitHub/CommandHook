@@ -7,14 +7,13 @@ import blog.dekun.wang.command.hook.utils.Utils
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.components.JBList
 import java.awt.BorderLayout
 import java.awt.CardLayout
 import javax.swing.*
 
-class ConfigConfigurable : Configurable {
+class ConfigConfigurable(val project: Project) : Configurable {
 
     private val mainPanel = JPanel(BorderLayout())
 
@@ -31,22 +30,10 @@ class ConfigConfigurable : Configurable {
         }
     }
 
-    private var _project: Project? = ProjectManager.getInstance().openProjects.firstOrNull()
-
-    var project: Project?
-        get() = _project
-        set(value) {
-            _project = value
-            loadPersistedData()
-        }
-
 
     private fun loadPersistedData() {
-        val project = project
-        if (project != null) {
-            leftItemList.clear()
-            ServiceUtils.getConfigInfoList(project).forEach { leftItemList.addElement(it) }
-        }
+        leftItemList.clear()
+        ServiceUtils.getConfigInfoList(project).forEach { leftItemList.addElement(it) }
     }
 
     override fun createComponent(): JComponent {
@@ -149,7 +136,6 @@ class ConfigConfigurable : Configurable {
     }
 
     override fun isModified(): Boolean {
-        val project = project ?: return false
         val persistedData = ServiceUtils.getConfigInfoList(project)
         val currentData = (0 until leftItemList.size).map { leftItemList[it] }
         return persistedData != currentData
@@ -157,7 +143,6 @@ class ConfigConfigurable : Configurable {
 
 
     override fun apply() {
-        val project = project ?: return
         val currentData = (0 until leftItemList.size).map { leftItemList[it] }
         currentData.forEachIndexed { index, item -> item.index = index }
         val persistedData = ServiceUtils.getConfigInfoList(project)

@@ -18,10 +18,12 @@ import com.intellij.openapi.options.ShowSettingsUtil
 class UnregisterAction : BaseAnAction() {
 
     override fun update(event: AnActionEvent) {
+        event.project ?: { event.presentation.isEnabledAndVisible = false }
         event.presentation.text = "注销AnAction"
     }
 
     override fun actionPerformed(event: AnActionEvent) {
-        ShowSettingsUtil.getInstance().editConfigurable(event.project, UnregisterActionConfigurable(event.project))
+        val project = event.project ?: return
+        ShowSettingsUtil.getInstance().editConfigurable(project, UnregisterActionConfigurable(project))
     }
 }

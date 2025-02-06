@@ -99,6 +99,10 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
     override fun update(event: AnActionEvent) {
+        if (event.project == null) {
+            event.presentation.isEnabledAndVisible = false
+            return
+        }
         val name = configInfo.name.trim()
         event.presentation.text = name
         if (name.isBlank()) {
@@ -117,10 +121,11 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
     }
 
     override fun actionPerformed(event: AnActionEvent) {
+        val project = event.project ?: return
 //        val regex = Regex("@@(\\S+)")
         var commandStr = configInfo.commandStr?.trim()
         if (commandStr.isNullOrEmpty()) {
-            Utils.showNotification(event.project, configInfo.name, "commandStr is empty", NotificationType.ERROR)
+            Utils.showNotification(project, configInfo.name, "commandStr is empty", NotificationType.ERROR)
             return
         }
 //        commandStr = regex.replace(commandStr) { matchResult ->
@@ -135,12 +140,12 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
             if (virtualFile != null) {
                 val path = configInfo.executionDir?.takeIf { it.isNotBlank() } ?: if (virtualFile.isDirectory) virtualFile.path.substringBeforeLast("/")
                 else virtualFile.path
-                RunToolWindowUtil.executeWithRealTimeOutput(configInfo.name, commandStr.split(" "), path)
+                RunToolWindowUtil.executeWithRealTimeOutput(project, configInfo.name, commandStr.split(" "), path)
             } else {
-                RunToolWindowUtil.executeWithRealTimeOutput(configInfo.name, commandStr.split(" "))
+                RunToolWindowUtil.executeWithRealTimeOutput(project, configInfo.name, commandStr.split(" "))
             }
         } else {
-            RunToolWindowUtil.executeWithRealTimeOutput(configInfo.name, commandStr.split(" "))
+            RunToolWindowUtil.executeWithRealTimeOutput(project, configInfo.name, commandStr.split(" "))
         }
     }
 

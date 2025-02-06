@@ -96,12 +96,12 @@ class Utils {
         }
 
 
-        fun showNotification(project: Project?, title: String, content: String, type: NotificationType) {
+        fun showNotification(project: Project, title: String, content: String, type: NotificationType) {
             NotificationGroupManager.getInstance().getNotificationGroup(Constant.NOTIFICATION_GROUP_ID)
                 .createNotification(title, content, type).notify(project)
         }
 
-        fun showNotificationAnActionId(project: Project?, title: String, content: String) {
+        fun showNotificationAnActionId(project: Project, title: String, content: String) {
             NotificationGroupManager.getInstance().getNotificationGroup(Constant.NOTIFICATION_GROUP_AN_ACTION_ID)
                 .createNotification(title, content, NotificationType.INFORMATION)
                 .notify(project)

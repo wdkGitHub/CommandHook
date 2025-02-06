@@ -18,6 +18,7 @@ import com.intellij.openapi.actionSystem.ex.AnActionListener
 class GlobalActionListener : AnActionListener {
 
     override fun beforeActionPerformed(action: AnAction, event: AnActionEvent) {
+        val project = event.project ?: return
         if (UnregisterActionService.isEnableNotify() && !action.javaClass.name.contains("dekun.wang")) {
             val actionId = ActionManager.getInstance().getId(action)
             if ("EditorCopy" == actionId) {
@@ -31,11 +32,11 @@ class GlobalActionListener : AnActionListener {
             GroupId = $groupId <br>
             Class = ${action.javaClass.name}
             """.trimIndent()
-            Utils.showNotificationAnActionId(event.project, "AnActionIdNotificationGroup", message)
+            Utils.showNotificationAnActionId(project, "AnActionIdNotificationGroup", message)
         }
     }
 
-    fun getGroupId(actionText: String?): List<String> {
+    private fun getGroupId(actionText: String?): List<String> {
         val mutableListOf = mutableListOf<String>()
         actionText?.let {
             ActionManager.getInstance().getActionIdList("").forEach { id ->

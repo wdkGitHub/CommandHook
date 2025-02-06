@@ -4,7 +4,6 @@ import blog.dekun.wang.command.hook.data.UnregisterActions
 import blog.dekun.wang.command.hook.services.UnregisterActionService
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.table.JBTable
 import java.awt.BorderLayout
@@ -14,7 +13,7 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.table.DefaultTableModel
 
-class UnregisterActionConfigurable(val project: Project? = ProjectManager.getInstance().openProjects.firstOrNull()) : Configurable {
+class UnregisterActionConfigurable(val project: Project) : Configurable {
 
     private val tableModel = object : DefaultTableModel(arrayOf("AnActionId", "功能描述", "注销"), 0) {
         @Serial

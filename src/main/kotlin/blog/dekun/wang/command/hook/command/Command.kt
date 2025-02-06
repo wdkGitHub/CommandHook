@@ -1,7 +1,6 @@
 package blog.dekun.wang.command.hook.command
 
 import blog.dekun.wang.command.hook.constants.CommandType
-import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.SystemInfo
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -40,11 +39,7 @@ interface Command {
                 throw UnsupportedOperationException("$osNameAndVersion is not supported")
             }
         }
-
-        fun executeDefaultDir(commands: List<String>, dirPath: String? = null): String {
-            return execute(commands, dirPath ?: ProjectManager.getInstance().openProjects.firstOrNull()?.basePath ?: System.getProperty("user.home"))
-        }
-
+        
         fun execute(commands: List<String>, dirPath: String? = null): String {
             val commandStr = commands.joinToString(" ")
             println("执行的命令：$commandStr $dirPath")

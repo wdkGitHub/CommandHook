@@ -18,12 +18,13 @@ import com.intellij.openapi.options.ShowSettingsUtil
 class ConfigUiAction : BaseAnAction() {
 
     override fun update(event: AnActionEvent) {
+        event.project ?: { event.presentation.isEnabledAndVisible = false }
         event.presentation.text = "命令配置"
     }
 
     override fun actionPerformed(event: AnActionEvent) {
-        val configConfigurable = ConfigConfigurable()
-        configConfigurable.project = event.project
-        ShowSettingsUtil.getInstance().editConfigurable(event.project, configConfigurable)
+        val project = event.project ?: return
+        val configConfigurable = ConfigConfigurable(project)
+        ShowSettingsUtil.getInstance().editConfigurable(project, configConfigurable)
     }
 }
