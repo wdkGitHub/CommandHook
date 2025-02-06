@@ -6,6 +6,7 @@ import blog.dekun.wang.command.hook.data.ConfigInfo
 import blog.dekun.wang.command.hook.services.ServiceUtils
 import blog.dekun.wang.command.hook.utils.RunToolWindowUtil
 import blog.dekun.wang.command.hook.utils.Utils
+import com.intellij.icons.AllIcons
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionUpdateThread
@@ -123,6 +124,7 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
             virtualFile.isFile && configInfo.isTargetFile == true -> isEnabled
             else -> false
         }
+        event.presentation.icon = AllIcons.Actions.Execute
     }
 
     override fun actionPerformed(event: AnActionEvent) {
