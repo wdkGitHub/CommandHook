@@ -39,11 +39,11 @@ interface Command {
                 throw UnsupportedOperationException("$osNameAndVersion is not supported")
             }
         }
-        
+
         fun execute(commands: List<String>, dirPath: String? = null): String {
             val commandStr = commands.joinToString(" ")
             println("执行的命令：$commandStr $dirPath")
-            val processBuilder = ProcessBuilder(commands)
+            val processBuilder = ProcessBuilder(listOf(System.getenv("SHELL"), "-c") + commands)
             dirPath?.let { processBuilder.directory(java.io.File(it)) }
             processBuilder.redirectErrorStream(true)
             val process = processBuilder.start()

@@ -26,7 +26,7 @@ object RunToolWindowUtil {
 
         val consoleView: ConsoleView = TextConsoleBuilderFactory.getInstance().createBuilder(project).console
 
-        val processBuilder = ProcessBuilder(commands)
+        val processBuilder = ProcessBuilder(listOf(System.getenv("SHELL"), "-c") + commands)
         val directory = when {
             dirPath != null -> File(dirPath)
             project.basePath != null -> File(project.basePath!!)
