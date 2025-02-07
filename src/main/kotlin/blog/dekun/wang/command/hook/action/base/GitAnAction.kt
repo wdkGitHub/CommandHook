@@ -20,6 +20,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 abstract class GitAnAction : WelcomeScreen, BaseAnAction() {
 
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
     fun setEnableVisible(event: AnActionEvent, checkRemote: Boolean = false) {
         super.enableVisible(event) {
             println(event.place)
