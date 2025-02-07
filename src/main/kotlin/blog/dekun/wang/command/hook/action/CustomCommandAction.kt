@@ -48,8 +48,7 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
         }
 
         private fun getActionId(name: String, isRightClick: Boolean): String {
-            val groupId =
-                if (isRightClick) Constant.ACTION_GROUP_ID_RIGHT_CLICK else Constant.ACTION_GROUP_ID
+            val groupId = if (isRightClick) Constant.ACTION_GROUP_ID_RIGHT_CLICK else Constant.ACTION_GROUP_ID
             return "$groupId.$name"
         }
 
@@ -84,13 +83,11 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
             getActionId(config).forEach { actionId ->
                 when {
                     actionId.startsWith(Constant.ACTION_GROUP_ID) -> remove(
-                        actionId,
-                        Constant.ACTION_GROUP_ID
+                        actionId, Constant.ACTION_GROUP_ID
                     )
 
                     actionId.startsWith(Constant.ACTION_GROUP_ID_RIGHT_CLICK) -> remove(
-                        actionId,
-                        Constant.ACTION_GROUP_ID_RIGHT_CLICK
+                        actionId, Constant.ACTION_GROUP_ID_RIGHT_CLICK
                     )
                 }
             }
@@ -124,7 +121,8 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
             virtualFile.isFile && configInfo.isTargetFile == true -> isEnabled
             else -> false
         }
-        event.presentation.icon = AllIcons.Actions.Execute
+        AllIcons.Actions.Resume
+        event.presentation.icon = if (configInfo.isApp == true) AllIcons.Actions.Resume else AllIcons.Actions.Execute
     }
 
     override fun actionPerformed(event: AnActionEvent) {

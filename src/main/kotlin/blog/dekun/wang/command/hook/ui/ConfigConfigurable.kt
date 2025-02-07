@@ -4,6 +4,7 @@ import blog.dekun.wang.command.hook.action.CustomCommandAction
 import blog.dekun.wang.command.hook.data.ConfigInfo
 import blog.dekun.wang.command.hook.services.ServiceUtils
 import blog.dekun.wang.command.hook.utils.Utils
+import com.intellij.icons.AllIcons
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.project.Project
@@ -24,6 +25,7 @@ class ConfigConfigurable(val project: Project) : Configurable {
         cellRenderer = ListCellRenderer { list, value, index, isSelected, cellHasFocus ->
             JLabel(value.name).apply {
                 isOpaque = true
+                value.isApp?.let { icon = if (it) AllIcons.Ide.Rating else null }
                 border = BorderFactory.createEmptyBorder(0, 5, 1, 0)
                 background = if (isSelected) list.selectionBackground else list.background
                 foreground = if (isSelected) list.selectionForeground else list.foreground
