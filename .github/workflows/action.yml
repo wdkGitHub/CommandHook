@@ -16,7 +16,7 @@ jobs:
     build-and-release:
         runs-on: ubuntu-latest
         env:
-            GIT_USER_NAME: "GitHub Actions"
+            GIT_USER_NAME: "GitHubActions"
         steps:
             -   name: "检出仓库代码"
                 uses: actions/checkout@v4
@@ -69,23 +69,6 @@ jobs:
                     if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
                         echo "NEW_PLUGIN_VERSION=${PLUGIN_VERSION}" >> $GITHUB_ENV
                     fi
-
-            -   name: "版本变更"
-                if: env.PLUGIN_VERSION_CHANGED == 'true'
-                run: |
-                    set -e
-                    ./gradlew updatePluginXml  \
-                        -Purl=https://github.com/${{ github.repository }}/releases/download/v${{ env.NEW_PLUGIN_VERSION }}/${{ env.PLUGIN_NAME }}-${{ env.NEW_PLUGIN_VERSION }}.zip
-
-            -   name: "提交版本变更"
-                if: env.PLUGIN_VERSION_CHANGED == 'true'
-                run: |
-                    set -e
-                    git config --global user.name "${{ env.GIT_USER_NAME }}"
-                    git config --global user.email "${{ env.PLUGIN_VENDOR_EMAIL }}"
-                    git diff --quiet || (git add . && git commit -m "发布版本 ${{ env.NEW_PLUGIN_VERSION }}")
-                    echo "COMMIT_SHA=$(git rev-parse master)" >> $GITHUB_ENV
-                    git push origin ${{ env.BRANCH_NAME }} || echo "没有需要推送的信息"
             -   name: "清理 Git Tag"
                 if: env.PLUGIN_VERSION_CHANGED == 'true'
                 run: |
@@ -108,13 +91,31 @@ jobs:
                     git log --oneline -5
                     git symbolic-ref --short HEAD
                     ./gradlew buildPlugin --info --stacktrace
+            -   name: "版本变更"
+                if: env.PLUGIN_VERSION_CHANGED == 'true'
+                run: |
+                    set -e
+                    ./gradlew updatePluginXml  \
+                        -Purl=https://github.com/${{ github.repository }}/releases/download/v${{ env.NEW_PLUGIN_VERSION }}/${{ env.PLUGIN_NAME }}-${{ env.NEW_PLUGIN_VERSION }}.zip
+
+            -   name: "提交版本变更"
+                if: env.PLUGIN_VERSION_CHANGED == 'true'
+                run: |
+                    set -e
+                    git config --global user.name "${{ env.GIT_USER_NAME }}"
+                    git config --global user.email "${{ env.PLUGIN_VENDOR_EMAIL }}"
+                    git diff --quiet || (git add . && git commit -m "发布版本 ${{ env.NEW_PLUGIN_VERSION }}")
             -   name: "发布版本"
                 if: env.PLUGIN_VERSION_CHANGED == 'true'
-                uses: softprops/action-gh-release@v2
+                uses: ncipollo/release-action@v1
                 with:
-                    tag_name: "v${{ env.NEW_PLUGIN_VERSION }}"
+                    tag: "v${{ env.NEW_PLUGIN_VERSION }}"
                     name: "v${{ env.NEW_PLUGIN_VERSION }}"
                     body: "发布版本 ${{ env.NEW_PLUGIN_VERSION }}"
-                    files: build/distributions/${{ env.PLUGIN_NAME }}-${{ env.NEW_PLUGIN_VERSION }}.zip
+                    artifacts: build/distributions/${{ env.PLUGIN_NAME }}-${{ env.NEW_PLUGIN_VERSION }}.zip
                     prerelease: ${{ contains(env.NEW_PLUGIN_VERSION, 'SNAPSHOT') }}
-                    target_commitish: ${{ env.COMMIT_SHA }}
+            -   name: "推送最终结果"
+                if: env.PLUGIN_VERSION_CHANGED == 'true'
+                run: |
+                    set -e
+                    git push origin ${{ env.BRANCH_NAME }} || echo "没有需要推送的信息"
