@@ -141,24 +141,15 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
             if (virtualFile != null) {
                 val path = configInfo.executionDir?.takeIf { it.isNotBlank() } ?: if (virtualFile.isDirectory) virtualFile.path.substringBeforeLast("/")
                 else virtualFile.path
-                RunToolWindowUtil.executeWithRealTimeOutput(project, configInfo.name, commandStr.split(" "), path)
+                RunToolWindowUtil.executeWithRealTimeOutput(project, configInfo.name, commandStr, path)
             } else {
-                RunToolWindowUtil.executeWithRealTimeOutput(project, configInfo.name, commandStr.split(" "))
+                RunToolWindowUtil.executeWithRealTimeOutput(project, configInfo.name, commandStr)
             }
         } else {
-            RunToolWindowUtil.executeWithRealTimeOutput(project, configInfo.name, commandStr.split(" "))
+            RunToolWindowUtil.executeWithRealTimeOutput(project, configInfo.name, commandStr)
         }
     }
 
 
 }
-
-fun main() {
-    val regex = Regex("\\{\\{([A-Z_]+)}}")  // 识别 {{VAR}} 形式
-    val commandStr = "echo {{SHELL}} {{JAVA_HOME}} {{HOME}}"
-    val result = regex.replace(commandStr) { matchResult -> System.getenv(matchResult.groupValues[1]) ?: matchResult.value }
-    val replace = commandStr.replace(Regex("\\{\\{([A-Z_]+)}}")) { matchResult -> System.getenv(matchResult.groupValues[1]) ?: matchResult.value }
-    println(replace)
-}
-
 

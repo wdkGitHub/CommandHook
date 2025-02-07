@@ -43,7 +43,7 @@ interface Command {
         fun execute(commands: List<String>, dirPath: String? = null): String {
             val commandStr = commands.joinToString(" ")
             println("执行的命令：$commandStr $dirPath")
-            val processBuilder = ProcessBuilder(listOf(System.getenv("SHELL"), "-c") + commands)
+            val processBuilder = ProcessBuilder(listOf(System.getenv("SHELL") ?: "/bin/bash", "-c", commandStr))
             dirPath?.let { processBuilder.directory(java.io.File(it)) }
             processBuilder.redirectErrorStream(true)
             val process = processBuilder.start()
