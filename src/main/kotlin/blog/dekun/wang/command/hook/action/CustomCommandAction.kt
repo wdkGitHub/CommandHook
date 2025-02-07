@@ -129,19 +129,13 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
 
     override fun actionPerformed(event: AnActionEvent) {
         val project = event.project ?: return
-//        val regex = Regex("@@(\\S+)")
+        val regex = Regex("\\{\\{([A-Z_]+)}}")
         var commandStr = configInfo.commandStr?.trim()
         if (commandStr.isNullOrEmpty()) {
             Utils.showNotification(project, configInfo.name, "commandStr is empty", NotificationType.ERROR)
             return
         }
-//        commandStr = regex.replace(commandStr) { matchResult ->
-//            // 获取 @ 后的内容，例如 PATH
-//            val variableName = matchResult.groupValues[1]
-//            val value = System.getenv(variableName) ?: "NotFoundEnvVariable"
-//            // 替换为环境变量值
-//            value
-//        }
+        commandStr = regex.replace(commandStr) { matchResult -> System.getenv(matchResult.groupValues[1]) ?: matchResult.value }
         if (configInfo.isTargetFile == true || configInfo.isTargetFolder == true) {
             val virtualFile = Utils.getVirtualFile(event)
             if (virtualFile != null) {
@@ -158,4 +152,13 @@ class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
 
 
 }
+
+fun main() {
+    val regex = Regex("\\{\\{([A-Z_]+)}}")  // 识别 {{VAR}} 形式
+    val commandStr = "echo {{SHELL}} {{JAVA_HOME}} {{HOME}}"
+    val result = regex.replace(commandStr) { matchResult -> System.getenv(matchResult.groupValues[1]) ?: matchResult.value }
+    val replace = commandStr.replace(Regex("\\{\\{([A-Z_]+)}}")) { matchResult -> System.getenv(matchResult.groupValues[1]) ?: matchResult.value }
+    println(replace)
+}
+
 
