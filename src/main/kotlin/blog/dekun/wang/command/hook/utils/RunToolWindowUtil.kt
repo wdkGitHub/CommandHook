@@ -22,11 +22,12 @@ import javax.swing.JPanel
 object RunToolWindowUtil {
 
 
-    fun executeWithRealTimeOutput(project: Project, tabName: String, commands: String, dirPath: String? = null) {
+    fun executeWithRealTimeOutput(project: Project, tabName: String, commandLine: String, dirPath: String? = null) {
 
         val consoleView: ConsoleView = TextConsoleBuilderFactory.getInstance().createBuilder(project).console
 
-        val processBuilder = ProcessBuilder(listOf(System.getenv("SHELL") ?: "/bin/bash", "-c", commands))
+        val command = listOf(System.getenv("SHELL") ?: "/bin/bash", "-c", commandLine)
+        val processBuilder = ProcessBuilder(command)
         val directory = when {
             dirPath != null -> File(dirPath)
             project.basePath != null -> File(project.basePath!!)
@@ -36,7 +37,7 @@ object RunToolWindowUtil {
         try {
             val process = processBuilder.start()
 
-            val processHandler = OSProcessHandler(process, commands)
+            val processHandler = OSProcessHandler(process, command.joinToString(" "))
             val stopButton = JButton().apply {
                 preferredSize = Dimension(28, 28)
                 icon = AllIcons.Actions.Suspend
