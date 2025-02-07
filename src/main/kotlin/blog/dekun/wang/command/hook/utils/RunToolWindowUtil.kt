@@ -7,6 +7,7 @@ import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.ui.ConsoleView
+import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.execution.ui.RunContentManager
 import com.intellij.icons.AllIcons
@@ -33,11 +34,12 @@ object RunToolWindowUtil {
             project.basePath != null -> File(project.basePath!!)
             else -> File(System.getProperty("user.home"))
         }
+        consoleView.print("$directory \n", ConsoleViewContentType.LOG_INFO_OUTPUT)
         processBuilder.directory(directory)
         try {
             val process = processBuilder.start()
 
-            val processHandler = OSProcessHandler(process, command.joinToString(" "))
+            val processHandler = OSProcessHandler(process, commandLine)
             val stopButton = JButton().apply {
                 preferredSize = Dimension(28, 28)
                 icon = AllIcons.Actions.Suspend
@@ -45,7 +47,7 @@ object RunToolWindowUtil {
             }
             processHandler.addProcessListener(object : ProcessAdapter() {
                 override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-                    consoleView.print(event.text, com.intellij.execution.ui.ConsoleViewContentType.SYSTEM_OUTPUT)
+                    consoleView.print(event.text, ConsoleViewContentType.LOG_DEBUG_OUTPUT)
                 }
 
                 override fun processTerminated(event: ProcessEvent) {
@@ -83,7 +85,7 @@ object RunToolWindowUtil {
             processHandler.startNotify()
 
         } catch (e: Exception) {
-            consoleView.print("Failed to execute command: ${e.message}\n", com.intellij.execution.ui.ConsoleViewContentType.ERROR_OUTPUT)
+            consoleView.print("Failed to execute command: ${e.message}\n", ConsoleViewContentType.LOG_ERROR_OUTPUT)
         }
     }
 
