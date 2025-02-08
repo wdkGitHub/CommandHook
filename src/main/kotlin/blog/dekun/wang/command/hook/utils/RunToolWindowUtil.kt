@@ -13,6 +13,7 @@ import com.intellij.execution.ui.RunContentManager
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.SystemInfo
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.io.File
@@ -29,6 +30,21 @@ object RunToolWindowUtil {
 
         val command = listOf(System.getenv("SHELL") ?: "/bin/bash", "-c", commandLine)
         val processBuilder = ProcessBuilder(command)
+
+        if (SystemInfo.isMac) {
+            System.getenv("PATH")?.let { path ->
+                val requiredPaths = listOf("/usr/local/bin", "/usr/local/sbin")
+                val existingPaths = path.split(":").toSet()
+                val missingPaths = requiredPaths.filter { it !in existingPaths }
+                val newPath = if (missingPaths.isNotEmpty()) {
+                    (missingPaths + existingPaths).joinToString(":") // 保持去重
+                } else {
+                    path
+                }
+                System.setProperty("PATH", newPath)
+                processBuilder.environment()["PATH"] = newPath
+            }
+        }
         val directory = when {
             dirPath != null -> File(dirPath)
             project.basePath != null -> File(project.basePath!!)
