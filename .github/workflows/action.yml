@@ -16,7 +16,7 @@ jobs:
     build-and-release:
         runs-on: ubuntu-latest
         env:
-            GIT_USER_NAME: "GitHubActions"
+            GIT_USER_NAME: "wdk"
         steps:
             -   name: "检出仓库代码"
                 uses: actions/checkout@v4
