@@ -63,6 +63,11 @@ object RunToolWindowUtil {
             }
             processHandler.addProcessListener(object : ProcessAdapter() {
                 override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
+                    if (commandLine == event.text.trim()) {
+                        consoleView.print("Execute：${event.text}", ConsoleViewContentType.LOG_INFO_OUTPUT)
+                        consoleView.print(" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n", ConsoleViewContentType.LOG_INFO_OUTPUT)
+                        return
+                    }
                     consoleView.print(event.text, ConsoleViewContentType.LOG_DEBUG_OUTPUT)
                 }
 
