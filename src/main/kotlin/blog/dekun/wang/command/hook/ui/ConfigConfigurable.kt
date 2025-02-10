@@ -130,8 +130,8 @@ class ConfigConfigurable(val project: Project) : Configurable {
         leftList.addListSelectionListener { updateDetailPanel(leftList.selectedIndex) }
 
         mainPanel.preferredSize = java.awt.Dimension(800, 300)
-        leftListOperationsPanel.preferredSize = java.awt.Dimension(250, 300)
-        rightPanel.preferredSize = java.awt.Dimension(550, 300)
+        leftListOperationsPanel.preferredSize = java.awt.Dimension(150, 300)
+        rightPanel.preferredSize = java.awt.Dimension(650, 300)
 
         mainPanel.add(leftListOperationsPanel, BorderLayout.WEST)
         mainPanel.add(rightPanel, BorderLayout.CENTER)
@@ -150,16 +150,9 @@ class ConfigConfigurable(val project: Project) : Configurable {
         currentData.forEachIndexed { index, item -> item.index = index }
         val persistedData = ServiceUtils.getConfigInfoList(project)
         val changes = currentData.size != persistedData.size || currentData.indices.any { i -> !currentData[i].equalsValue(persistedData[i]) }
-        println(changes)
         if (changes) {
             // 更新持久化数据
             val currentDataSort = currentData.toMutableList().apply { sortBy { it.index } }
-            currentDataSort.forEach {
-                println(it)
-            }
-            persistedData.forEach {
-                println(it)
-            }
             CustomCommandAction.modifyAction(currentDataSort, persistedData)
             ServiceUtils.saveConfigInfoList(project, currentDataSort)
         }

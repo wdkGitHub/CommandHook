@@ -23,7 +23,6 @@ abstract class GitAnAction : WelcomeScreen, BaseAnAction() {
 
     fun setEnableVisible(event: AnActionEvent, checkRemote: Boolean = false) {
         super.enableVisible(event) {
-            println(event.place)
             val gitRepoRootPath = if (event.place == Constant.WELCOME_SCREEN) {
                 Utils.getProjectPath(event)
             } else if (event.place == "Vcs.Push.ContextMenu" || event.place == "Vcs.Log.ContextMenu") {
