@@ -30,9 +30,16 @@ class CommandActionConfigUI {
 
     companion object {
 
+        var init = false
+
         val commandActionConfigUI = CommandActionConfigUI()
 
         fun component(): JComponent {
+            if (!init) {
+                commandActionConfigUI.createUIComponents()
+                commandActionConfigUI.setupEventListeners()
+                init = true
+            }
             return commandActionConfigUI.rootPanel
         }
 
@@ -55,12 +62,6 @@ class CommandActionConfigUI {
     private lateinit var defaultRadio: JBRadioButton
     private lateinit var centralToolbarRadio: JBRadioButton
     private lateinit var rightClickRadio: JBRadioButton
-
-
-    init {
-        createUIComponents()
-        setupEventListeners()
-    }
 
 
     private fun printlnConfig() {
