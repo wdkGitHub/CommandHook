@@ -2,6 +2,7 @@ package blog.dekun.wang.command.hook.action
 
 import blog.dekun.wang.command.hook.action.base.BaseAnAction
 import blog.dekun.wang.command.hook.ui.ConfigConfigurable
+import blog.dekun.wang.command.hook.ui.TestConfigurable
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.options.ShowSettingsUtil
 
@@ -25,6 +26,6 @@ class ConfigUiAction : BaseAnAction() {
     override fun actionPerformed(event: AnActionEvent) {
         val project = event.project ?: return
         val configConfigurable = ConfigConfigurable(project)
-        ShowSettingsUtil.getInstance().editConfigurable(project, configConfigurable)
+        ShowSettingsUtil.getInstance().editConfigurable(project, TestConfigurable(project))
     }
 }
