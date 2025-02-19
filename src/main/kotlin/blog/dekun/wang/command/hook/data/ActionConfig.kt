@@ -27,6 +27,5 @@ data class ActionConfig(
     constructor(name: String, commandStr: String, position: ActionPosition) : this(name, true, true, null, null, commandStr, position)
 }
 
-data class TemplateConfig(val name: String, val value: String, val onlyProject: Boolean)
-
+data class TemplateConfig(val name: String = "", val value: String = "", val onlyProject: Boolean = true)
 

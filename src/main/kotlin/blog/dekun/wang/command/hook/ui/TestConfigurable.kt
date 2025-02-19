@@ -35,8 +35,8 @@ class TestConfigurable(val project: Project) : Configurable {
             border = null
             add(ActionConfigListUI().getComponent(), BorderLayout.CENTER)
         })
-        tabbedPane.addTab("命令模板", Tables.commandTables())
-        tabbedPane.addTab("参数模板", Tables.paramTables())
+        tabbedPane.addTab("命令模板", Tables.commandTables().first)
+        tabbedPane.addTab("参数模板", Tables.paramTables().first)
         tabbedPane.addTab("TEST", TestMasterDetailsComponent().createComponent())
         return tabbedPane
     }
