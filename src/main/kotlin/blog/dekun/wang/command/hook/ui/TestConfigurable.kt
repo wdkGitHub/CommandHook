@@ -1,6 +1,6 @@
 package blog.dekun.wang.command.hook.ui
 
-import blog.dekun.wang.command.hook.ui.components.ActionConfigListUI
+import blog.dekun.wang.command.hook.ui.components.ActionConfigMasterDetailComponent
 import blog.dekun.wang.command.hook.ui.components.Tables
 import blog.dekun.wang.command.hook.ui.components.TestMasterDetailsComponent
 import com.intellij.openapi.options.Configurable
@@ -33,7 +33,7 @@ class TestConfigurable(val project: Project) : Configurable {
         tabbedPane.preferredSize = Dimension(800, 600)
         tabbedPane.addTab("Actions", JPanel(BorderLayout()).apply {
             border = null
-            add(ActionConfigListUI().getComponent(), BorderLayout.CENTER)
+            add(ActionConfigMasterDetailComponent().getComponent(), BorderLayout.CENTER)
         })
         tabbedPane.addTab("命令模板", Tables.commandTables().first)
         tabbedPane.addTab("参数模板", Tables.paramTables().first)

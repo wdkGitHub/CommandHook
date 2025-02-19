@@ -20,7 +20,7 @@ import java.awt.event.MouseEvent
 import javax.swing.*
 
 
-class ActionConfigListUI {
+class ActionConfigMasterDetailComponent {
 
     val listModel = DefaultListModel<ActionConfig>().apply {
         addElement(ActionConfig("动作1", false, true, "/wdk1", listOf("ppppp=1"), "sl", ActionPosition.DEFAULT))
@@ -33,7 +33,7 @@ class ActionConfigListUI {
 
     private val masterList = JBList(listModel)
 
-    private val detailsComponent = CommandActionConfigUI.component()
+    private val detailsComponent = ActionConfigDetail.component()
 
     private val detailPanel = JPanel(BorderLayout()).apply {
         add(createEmptyStatePanel(), BorderLayout.CENTER)
@@ -162,7 +162,7 @@ class ActionConfigListUI {
                     lastSelectedIndex = if (selectedIndex != -1 && model.size > 0) selectedIndex else -1
                     detailPanel.removeAll()
                     selectedConfig?.let {
-                        CommandActionConfigUI.updateData(
+                        ActionConfigDetail.updateData(
                             it,
                             DefaultComboBoxModel(paramTemplate.toTypedArray()),
                             DefaultComboBoxModel(commandTemplate.toTypedArray())

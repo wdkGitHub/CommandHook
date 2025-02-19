@@ -26,25 +26,25 @@ import javax.swing.plaf.basic.BasicComboBoxEditor
  *https://plugins.jetbrains.com/docs/intellij/empty-state.html#master-detail-layout
  */
 
-class CommandActionConfigUI {
+class ActionConfigDetail {
 
     companion object {
 
         var init = false
 
-        val commandActionConfigUI = CommandActionConfigUI()
+        val actionConfigDetail = ActionConfigDetail()
 
         fun component(): JComponent {
             if (!init) {
-                commandActionConfigUI.createUIComponents()
-                commandActionConfigUI.setupEventListeners()
+                actionConfigDetail.createUIComponents()
+                actionConfigDetail.setupEventListeners()
                 init = true
             }
-            return commandActionConfigUI.rootPanel
+            return actionConfigDetail.rootPanel
         }
 
         fun updateData(newCurrentConfig: ActionConfig, paramTemplateModel: DefaultComboBoxModel<TemplateConfig>, commandTemplateModel: DefaultComboBoxModel<TemplateConfig>) {
-            commandActionConfigUI.updateData(newCurrentConfig, paramTemplateModel, commandTemplateModel)
+            actionConfigDetail.updateData(newCurrentConfig, paramTemplateModel, commandTemplateModel)
         }
     }
 
