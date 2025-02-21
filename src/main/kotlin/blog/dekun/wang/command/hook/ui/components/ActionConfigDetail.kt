@@ -245,7 +245,10 @@ class ActionConfigDetail {
         }
         defaultRadio = JBRadioButton("默认")
         centralToolbarRadio = JBRadioButton("中心工具栏")
-        rightClickRadio = JBRadioButton("右键菜单")
+        rightClickRadio = JBRadioButton("右键菜单").apply {
+            isEnabled = false
+            isVisible = false
+        }
         paramTable = JBTable(tableModel).apply {
             rowHeight = 30
             val totalWidth = preferredSize.width
@@ -306,7 +309,10 @@ class ActionConfigDetail {
                         preferredSize = Dimension(60, preferredSize.height)
                         border = BorderFactory.createEmptyBorder(0, 0, 0, 3)
                         horizontalAlignment = SwingConstants.RIGHT
-                    })
+                    }
+                    ).apply {
+                        border = BorderFactory.createEmptyBorder(0, 0, 0, 3)
+                    }
                 }
                 add(panel, BorderLayout.WEST)
                 add(paramTableJPanel(tableModel), BorderLayout.CENTER)

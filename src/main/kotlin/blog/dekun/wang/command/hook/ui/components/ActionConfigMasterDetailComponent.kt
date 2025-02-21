@@ -62,8 +62,9 @@ class ActionConfigMasterDetailComponent(private val listModel: DefaultListModel<
                     return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus).apply {
                         (this as JLabel).apply {
                             text = (value as? ActionConfig)?.name ?: ""
-                            icon = if ((value as? ActionConfig)?.enable == true)
-                                AllIcons.Actions.Execute else AllIcons.Actions.Suspend
+//                            icon = if ((value as? ActionConfig)?.enable == true)
+//                                AllIcons.Actions.Execute else AllIcons.Actions.Suspend
+                            icon = if ((value as? ActionConfig)?.onlyProject == true) AllIcons.Empty else AllIcons.Actions.Share
                         }
                     }
                 }
