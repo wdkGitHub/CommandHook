@@ -315,6 +315,7 @@ class ActionConfigDetail {
             tableModel.addRow(arrayOf<Any?>("id${index++}", "desc"))
         }
         setRemoveAction {
+            paramTable.cellEditor?.stopCellEditing()
             paramTable.selectedRows.takeIf { it.isNotEmpty() }?.let { selectedRows ->
                 val lastSelectedRow = selectedRows.last()
                 for (i in selectedRows.size - 1 downTo 0) {
@@ -334,6 +335,8 @@ class ActionConfigDetail {
                 var commandParams: List<String>? = null
                 val paramsCombo = customizeJComboBox(paramTemplate) {
                     commandParams = it.split(" ")
+                }.apply {
+                    preferredSize = Dimension((preferredSize.width * 1.5).toInt(), preferredSize.height)
                 }
                 val result = JOptionPane.showConfirmDialog(null, paramsCombo, "选择命令", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE)
 
@@ -348,6 +351,6 @@ class ActionConfigDetail {
             }
         })
     }.createPanel().apply {
-        preferredSize = Dimension(preferredSize.width, 300)
+        preferredSize = Dimension(preferredSize.width, 240)
     }
 }
