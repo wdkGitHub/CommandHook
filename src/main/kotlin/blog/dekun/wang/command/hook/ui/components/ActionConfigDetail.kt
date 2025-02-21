@@ -3,20 +3,27 @@ package blog.dekun.wang.command.hook.ui.components
 import blog.dekun.wang.command.hook.data.ActionConfig
 import blog.dekun.wang.command.hook.data.ActionPosition
 import blog.dekun.wang.command.hook.data.TemplateConfig
+import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileChooser.FileChooser
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBRadioButton
 import com.intellij.ui.components.OnOffButton
 import com.intellij.ui.components.fields.ExpandableTextField
+import com.intellij.ui.table.JBTable
 import com.intellij.util.ui.JBUI
 import java.awt.*
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.plaf.basic.BasicComboBoxEditor
+import javax.swing.table.DefaultTableModel
 
 /**
  *
@@ -57,7 +64,8 @@ class ActionConfigDetail {
     private lateinit var onlyProjectCheckBox: JBCheckBox
     private lateinit var enableToggle: OnOffButton
     private lateinit var workingDirectory: TextFieldWithBrowseButton
-    private lateinit var paramsCombo: ComboBox<TemplateConfig>
+
+    //    private lateinit var paramsCombo: ComboBox<TemplateConfig>
     private lateinit var commandCombo: ComboBox<TemplateConfig>
     private lateinit var defaultRadio: JBRadioButton
     private lateinit var centralToolbarRadio: JBRadioButton
@@ -141,8 +149,6 @@ class ActionConfigDetail {
         onlyProjectCheckBox.isSelected = currentConfig.onlyProject
         enableToggle.isSelected = currentConfig.enable
         workingDirectory.text = currentConfig.workingDirectory.orEmpty()
-        // 更新 ComboBox 选择项
-        params?.let { paramsCombo.selectedItem = TemplateConfig(it, params, true) }
         commandCombo.selectedItem = TemplateConfig(name = currentConfig.commandStr, value = currentConfig.commandStr, onlyProject = true)
         when (currentConfig.position) {
             ActionPosition.DEFAULT -> defaultRadio.isSelected = true
@@ -212,16 +218,16 @@ class ActionConfigDetail {
         currentConfig = ActionConfig("", false, false, null, null, "", ActionPosition.DEFAULT)
         rootPanel = JPanel().apply {
             layout = BorderLayout()
-            border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+            border = BorderFactory.createEmptyBorder(3, 3, 3, 3)
         }
-        onlyProjectCheckBox = JBCheckBox("项目").apply {
+        onlyProjectCheckBox = JBCheckBox("仅此项目").apply {
             toolTipText = "是否仅此项目可见"
+            horizontalTextPosition = SwingConstants.LEFT
+            border = BorderFactory.createEmptyBorder(0, 8, 0, 0)
+            horizontalAlignment = SwingConstants.RIGHT
         }
         enableToggle = OnOffButton()
         workingDirectory = TextFieldWithBrowseButton()
-        paramsCombo = customizeJComboBox(paramTemplate) {
-            currentConfig.commandParams = it.split(" ")
-        }
         commandCombo = customizeJComboBox(commandTemplate) {
             currentConfig.commandStr = it
         }
@@ -242,21 +248,14 @@ class ActionConfigDetail {
                 add(onlyProjectCheckBox, BorderLayout.WEST)
                 add(enableToggle, BorderLayout.EAST)
             }, gbc)
-            add(JPanel(BorderLayout()).apply {
-                add(JLabel("工作目录:"), BorderLayout.WEST)
-                add(workingDirectory, BorderLayout.CENTER)
-            }, gbc)
-            add(JPanel(BorderLayout()).apply {
-                add(JLabel("命令参数:"), BorderLayout.WEST)
-                add(paramsCombo, BorderLayout.CENTER)
-            }, gbc)
-            add(JPanel(BorderLayout()).apply {
-                add(JLabel("命令:"), BorderLayout.WEST)
-                add(commandCombo, BorderLayout.CENTER)
-            }, gbc)
             add(JPanel(FlowLayout(FlowLayout.LEFT)).apply {
                 alignmentX = Component.LEFT_ALIGNMENT
-                add(JLabel("位置:"))
+                add(JLabel("位置").apply {
+                    preferredSize = Dimension(60, preferredSize.height)
+                    border = BorderFactory.createEmptyBorder(0, 0, 0, 3)
+                    // 设置文本右对齐
+                    horizontalAlignment = SwingConstants.RIGHT
+                })
                 add(defaultRadio)
                 add(centralToolbarRadio)
                 add(rightClickRadio)
@@ -266,8 +265,121 @@ class ActionConfigDetail {
                     add(rightClickRadio)
                 }
             }, gbc)
+            add(JPanel(BorderLayout()).apply {
+                add(JLabel("工作目录").apply {
+                    preferredSize = Dimension(60, preferredSize.height)
+                    border = BorderFactory.createEmptyBorder(0, 0, 0, 3)
+                    // 设置文本右对齐
+                    horizontalAlignment = SwingConstants.RIGHT
+                }, BorderLayout.WEST)
+                add(workingDirectory, BorderLayout.CENTER)
+            }, gbc)
+            add(JPanel(BorderLayout()).apply {
+                add(JLabel("命令").apply {
+                    preferredSize = Dimension(60, preferredSize.height)
+                    border = BorderFactory.createEmptyBorder(0, 0, 0, 3)
+                    // 设置文本右对齐
+                    horizontalAlignment = SwingConstants.RIGHT
+                }, BorderLayout.WEST)
+                add(commandCombo, BorderLayout.CENTER)
+            }, gbc)
+            add(JPanel(BorderLayout()).apply {
+                // 创建一个用于包装 JLabel 和 Table 的 JPanel
+                val panel = JPanel(FlowLayout(FlowLayout.LEFT, 0, 0)).apply {
+                    // 设置 JLabel 上对齐
+                    add(JLabel("命令参数").apply {
+                        preferredSize = Dimension(60, preferredSize.height)
+                        border = BorderFactory.createEmptyBorder(0, 0, 0, 3)
+                        // 设置文本右对齐
+                        horizontalAlignment = SwingConstants.RIGHT
+                    })
+                }
+                // 将这个 panel 添加到 WEST 区域
+                add(panel, BorderLayout.WEST)
+
+                // 将 Table 放到 CENTER 区域
+                add(createComponentTable(), BorderLayout.CENTER)
+            }, gbc)
+
         }, BorderLayout.NORTH)
     }
 
+
+    fun createComponentTable(): JComponent {
+//        val tableModel = DefaultTableModel(arrayOf("Name", "Value"), 0)
+//        // 创建表格
+//        val table = JBTable(tableModel).apply {
+//            rowHeight = 30
+//        }
+        val columnNames = kotlin.arrayOf<kotlin.String>("Name", "Value")
+        val data = kotlin.arrayOf<kotlin.Array<kotlin.Any>>(
+//            kotlin.arrayOf<kotlin.Any>("Data 1", "Data 2", "Data 3"),
+//            kotlin.arrayOf<kotlin.Any>("Data 4", "Data 5", "Data 6"),
+//            kotlin.arrayOf<kotlin.Any>("Data 7", "Data 8", "Data 9")
+        )
+        val tableModel = DefaultTableModel(data, columnNames)
+
+
+        // 创建 JBTable 实例
+        val table: JBTable = JBTable(tableModel).apply {
+            rowHeight = 30
+            val totalWidth = preferredSize.width
+            columnModel.getColumn(0).preferredWidth = (totalWidth * 0.1).toInt()
+            columnModel.getColumn(1).preferredWidth = (totalWidth * 0.9).toInt()
+        }
+        // 使用 ToolbarDecorator 包装表格
+        val decorator = ToolbarDecorator.createDecorator(table).apply {
+            var index: Int = 0
+            setAddAction {
+                tableModel.addRow(arrayOf<Any?>("id${index++}", "desc")) // 添加空行
+            }
+            setRemoveAction {
+                val selectedRows = table.selectedRows
+                if (selectedRows.isNotEmpty()) {
+                    val rowIndexToSelect: Int
+                    // 获取删除的最后一行的索引
+                    val lastSelectedRow = selectedRows.last()
+                    // 删除选中行
+                    for (i in selectedRows.indices.reversed()) {
+                        tableModel.removeRow(selectedRows[i])
+                    }
+                    // 确定新的选中行（选择删除行前的上一行，或者选择删除后的第一行）
+                    if (lastSelectedRow > 0) {
+                        rowIndexToSelect = lastSelectedRow - 1 // 选择上一行
+                    } else {
+                        rowIndexToSelect = 0 // 如果删除的是第一行，选择第一行
+                    }
+                    // 更新选择的行
+                    if (tableModel.rowCount != 0) {
+                        table.setRowSelectionInterval(rowIndexToSelect, rowIndexToSelect)
+                    }
+                }
+            }
+
+            addExtraAction(object : AnAction("模板添加") {
+                override fun getActionUpdateThread() = ActionUpdateThread.BGT
+
+                override fun actionPerformed(e: AnActionEvent) {
+                    var commandParams: List<String>? = null
+                    val paramsCombo = customizeJComboBox(paramTemplate) {
+                        commandParams = it.split(" ")
+                    }
+                    val result = JOptionPane.showConfirmDialog(null, paramsCombo, "选择命令", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE)
+
+                    if (result == JOptionPane.OK_OPTION) {
+                        // 你可以根据需要获取 ComboBox 的选中项
+                        commandParams?.forEach { tableModel.addRow(arrayOf(it.split("=")[0], it.split("=")[1])) }
+                    }
+                }
+
+                override fun update(e: AnActionEvent) {
+                    e.presentation.icon = AllIcons.Actions.AddList
+                }
+            })
+        }
+        return decorator.createPanel().apply {
+            preferredSize = Dimension(preferredSize.width, 300)
+        }
+    }
 
 }

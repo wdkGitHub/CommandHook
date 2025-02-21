@@ -27,7 +27,13 @@ class ActionConfigMasterDetailComponent {
         addElement(ActionConfig("动作2", true, false, "/wdk2", listOf("ppppp=2"), "git", ActionPosition.CENTRAL_TOOLBAR))
         addElement(ActionConfig("动作3", false, true, "/wdk3", listOf("ppppp=3"), "pwd", ActionPosition.RIGHT_CLICK))
     }
-    val paramTemplate = listOf(TemplateConfig("参数(p=1)", "p=1", true))
+    val paramTemplate = listOf(
+        TemplateConfig("参数(p=1)", "p=1", true),
+        TemplateConfig("参数(p=2)", "p=2", true),
+        TemplateConfig("参数(p=3)", "p=3", true),
+        TemplateConfig("参数(p=4)", "p=4", true),
+        TemplateConfig("参数(p=5)", "p=5 p=4", true)
+    )
 
     val commandTemplate = listOf(TemplateConfig("命令(where)", "where", true))
 
