@@ -23,9 +23,9 @@ import javax.swing.*
 class ActionConfigMasterDetailComponent {
 
     val listModel = DefaultListModel<ActionConfig>().apply {
-        addElement(ActionConfig("动作1", false, true, "/wdk1", listOf("ppppp=1"), "sl", ActionPosition.DEFAULT))
-        addElement(ActionConfig("动作2", true, false, "/wdk2", listOf("ppppp=2"), "git", ActionPosition.CENTRAL_TOOLBAR))
-        addElement(ActionConfig("动作3", false, true, "/wdk3", listOf("ppppp=3"), "pwd", ActionPosition.RIGHT_CLICK))
+        addElement(ActionConfig("动作1", false, true, "/wdk1", mutableMapOf("ppppp" to "1"), "sl", ActionPosition.DEFAULT))
+        addElement(ActionConfig("动作2", true, false, "/wdk2", mutableMapOf("ppppp" to "2"), "git", ActionPosition.CENTRAL_TOOLBAR))
+        addElement(ActionConfig("动作3", false, true, "/wdk3", mutableMapOf("ppppp" to "3"), "pwd", ActionPosition.RIGHT_CLICK))
     }
     val paramTemplate = listOf(
         TemplateConfig("参数(p=1)", "p=1", true),
@@ -35,7 +35,19 @@ class ActionConfigMasterDetailComponent {
         TemplateConfig("参数(p=5)", "p=5 p=4", true)
     )
 
-    val commandTemplate = listOf(TemplateConfig("命令(where)", "where", true))
+    val commandTemplate = listOf(
+        TemplateConfig(
+            "命令(where)", "cd\n" +
+                    "0.shell/\n" +
+                    "&&\n" +
+                    "./deployFile.sh\n" +
+                    "\"deployFile\"\n" +
+                    "\"cenyang@192.168.0.203\"\n" +
+                    "\"Ceny@ng666\"\n" +
+                    "\"middle-platform\"\n" +
+                    "\"auth-manager\"", true
+        )
+    )
 
     private val masterList = JBList(listModel)
 
