@@ -9,24 +9,12 @@ import javax.swing.event.TableModelEvent
 import javax.swing.table.DefaultTableModel
 import javax.swing.table.TableCellRenderer
 
-
-/**
- *
- * @author WangDeKun
- * <p>
- * Email :  wangdekunemail@gmail.com
- *
- */
-
 class Tables {
-
     companion object {
 
         private val COLUMN_NAMES = arrayOf("名字", "值", "仅此项目可见")
 
-        fun commandTables(columns: Array<String> = COLUMN_NAMES, data: List<TemplateConfig>): Pair<JPanel, () -> List<TemplateConfig>> {
-            // 使用可变列表存储当前配置，并创建深拷贝避免修改原始数据
-            val configs = data.map { it.copy() }.toMutableList()
+        private fun commandTables(columns: Array<String> = COLUMN_NAMES, data: MutableList<TemplateConfig>, onDataChanged: (() -> Unit)? = null): JPanel {
             // 创建表格模型并初始化数据
             val model = object : DefaultTableModel(columns, 0) {
                 private val serialVersionUID: Long = -1648333981082710225L
@@ -38,13 +26,18 @@ class Tables {
                     }
                 }
             }.apply {
-                configs.forEach { addRow(arrayOf<Any>(it.name, it.value, it.onlyProject)) }
+                data.forEach { addRow(arrayOf<Any>(it.name, it.value, it.onlyProject)) }
+                addTableModelListener { e ->
+                    when (e.type) {
+                        TableModelEvent.UPDATE, TableModelEvent.INSERT, TableModelEvent.DELETE -> {
+                            onDataChanged?.invoke() // 数据变更时触发回调
+                        }
+                    }
+                }
             }
 
             val table = JBTable(model).apply {
-                // 配置为多行选择模式
                 selectionModel.selectionMode = ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
-                // 配置列宽自适应策略
                 autoResizeMode = JTable.AUTO_RESIZE_ALL_COLUMNS
 
                 columnModel.apply {
@@ -57,9 +50,8 @@ class Tables {
                 }
             }
 
-            // 初始化单元格渲染器和编辑器（使用单例模式提升性能）
             val textFieldRenderer = ExpandableTextField()
-            val checkBoxRenderer = JCheckBox().apply { horizontalAlignment = SwingConstants.LEFT;isOpaque = true }
+            val checkBoxRenderer = JCheckBox().apply { horizontalAlignment = SwingConstants.LEFT; isOpaque = true }
 
             with(table.columnModel) {
                 getColumn(1).apply {
@@ -71,17 +63,17 @@ class Tables {
                 getColumn(2).apply {
                     cellEditor = DefaultCellEditor(JCheckBox())
                     cellRenderer = TableCellRenderer { _, value, _, _, _, _ ->
-                        checkBoxRenderer.apply { isSelected = value as? Boolean == true;border = BorderFactory.createEmptyBorder(0, 30, 0, 0) }
+                        checkBoxRenderer.apply { isSelected = value as? Boolean == true; border = BorderFactory.createEmptyBorder(0, 30, 0, 0) }
                     }
                 }
             }
 
-            // 监听表格数据变化并同步到configs集合
             model.addTableModelListener { e ->
                 when (e.type) {
                     TableModelEvent.UPDATE -> {
                         val row = e.firstRow
-                        configs[row] = TemplateConfig(
+                        // 直接修改原始数据列表中的元素
+                        data[row] = TemplateConfig(
                             model.getValueAt(row, 0).toString(),
                             model.getValueAt(row, 1).toString(),
                             model.getValueAt(row, 2) as Boolean
@@ -90,8 +82,10 @@ class Tables {
 
                     TableModelEvent.INSERT -> {
                         val newRow = model.rowCount - 1
-                        configs.add(
-                            newRow, TemplateConfig(
+                        // 向原始数据列表中添加新元素
+                        data.add(
+                            newRow,
+                            TemplateConfig(
                                 model.getValueAt(newRow, 0).toString(),
                                 model.getValueAt(newRow, 1).toString(),
                                 model.getValueAt(newRow, 2) as Boolean
@@ -99,38 +93,31 @@ class Tables {
                         )
                     }
 
-                    TableModelEvent.DELETE -> configs.removeAt(e.firstRow)
+                    TableModelEvent.DELETE -> data.removeAt(e.firstRow) // 直接删除原始数据列表中的元素
                 }
             }
-            // 创建带操作工具栏的面板
+
             val panel = ToolbarDecorator.createDecorator(table)
                 .setAddAction {
-                    model.addRow(arrayOf<Any>("", "", false))
+                    model.addRow(arrayOf<Any>("新名称", "新值", false))
                 }
                 .setRemoveAction {
-                    // 获取所有选中的行
-                    val selectedRows = table.selectedRows
-                    if (selectedRows.isNotEmpty()) {
-                        // 删除选中的行，逆序删除以避免索引问题
-                        selectedRows.sortedDescending().forEach { row ->
-                            model.removeRow(row)
-                        }
+                    table.selectedRows.sortedDescending().forEach { row ->
+                        model.removeRow(row)
                     }
                 }.createPanel().apply {
                     border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
                 }
-
-            return Pair(panel) { configs.toList() }
+            return panel
         }
 
-        fun commandTables(): Pair<JPanel, () -> List<TemplateConfig>> {
-            return commandTables(data = listOf(TemplateConfig("命令(ls -1)", "s -1", true)))
+        // 重载函数处理MutableList参数
+        fun commandTables(commandData: MutableList<TemplateConfig>, onDataChanged: (() -> Unit)? = null): JPanel {
+            return commandTables(data = commandData, onDataChanged = onDataChanged)
         }
 
-        fun paramTables(): Pair<JPanel, () -> List<TemplateConfig>> {
-            return commandTables(COLUMN_NAMES, listOf(TemplateConfig("参数(p=1)", "p=1", true)))
+        fun paramTables(paramData: MutableList<TemplateConfig>, onDataChanged: (() -> Unit)? = null): JPanel {
+            return commandTables(COLUMN_NAMES, paramData, onDataChanged)
         }
     }
 }
-
-

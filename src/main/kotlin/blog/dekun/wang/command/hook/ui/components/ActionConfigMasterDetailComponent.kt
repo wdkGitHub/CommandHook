@@ -1,7 +1,6 @@
 package blog.dekun.wang.command.hook.ui.components
 
 import blog.dekun.wang.command.hook.data.ActionConfig
-import blog.dekun.wang.command.hook.data.ActionPosition
 import blog.dekun.wang.command.hook.data.TemplateConfig
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionUpdateThread
@@ -20,34 +19,9 @@ import java.awt.event.MouseEvent
 import javax.swing.*
 
 
-class ActionConfigMasterDetailComponent {
-
-    val listModel = DefaultListModel<ActionConfig>().apply {
-        addElement(ActionConfig("动作1", false, true, "/wdk1", mutableMapOf("ppppp" to "1"), "sl", ActionPosition.DEFAULT))
-        addElement(ActionConfig("动作2", true, false, "/wdk2", mutableMapOf("ppppp" to "2"), "git", ActionPosition.CENTRAL_TOOLBAR))
-        addElement(ActionConfig("动作3", false, true, "/wdk3", mutableMapOf("ppppp" to "3"), "pwd", ActionPosition.RIGHT_CLICK))
-    }
-    val paramTemplate = listOf(
-        TemplateConfig("参数(p=1)", "p=1", true),
-        TemplateConfig("参数(p=2)", "p=2", true),
-        TemplateConfig("参数(p=3)", "p=3", true),
-        TemplateConfig("参数(p=4)", "p=4", true),
-        TemplateConfig("参数(p=5)", "p=5 p=4", true)
-    )
-
-    val commandTemplate = listOf(
-        TemplateConfig(
-            "命令(where)", "cd\n" +
-                    "0.shell/\n" +
-                    "&&\n" +
-                    "./deployFile.sh\n" +
-                    "\"deployFile\"\n" +
-                    "\"cenyang@192.168.0.203\"\n" +
-                    "\"Ceny@ng666\"\n" +
-                    "\"middle-platform\"\n" +
-                    "\"auth-manager\"", true
-        )
-    )
+class ActionConfigMasterDetailComponent(private val listModel: DefaultListModel<ActionConfig>,
+                                        private var paramTemplate: MutableList<TemplateConfig>,
+                                        private var commandTemplate: MutableList<TemplateConfig>) {
 
     private val masterList = JBList(listModel)
 
@@ -104,7 +78,7 @@ class ActionConfigMasterDetailComponent {
                 newName?.takeIf { it.isNotBlank() }?.let {
                     val newConfig = ActionConfig(it, "")
                     listModel.addElement(newConfig)
-                    masterList.selectedIndex = masterList.selectedIndex + 1
+                    masterList.selectedIndex += 1
                 }
             }.setEditAction {
                 selectedConfig?.let {
@@ -135,7 +109,7 @@ class ActionConfigMasterDetailComponent {
                     selectedConfig?.let {
                         val newConfig = it.copy(name = "${it.name} Copy")
                         listModel.add(masterList.selectedIndex + 1, newConfig)
-                        masterList.selectedIndex = masterList.selectedIndex + 1
+                        masterList.selectedIndex += 1
                     }
                 }
 
@@ -180,11 +154,7 @@ class ActionConfigMasterDetailComponent {
                     lastSelectedIndex = if (selectedIndex != -1 && model.size > 0) selectedIndex else -1
                     detailPanel.removeAll()
                     selectedConfig?.let {
-                        ActionConfigDetail.updateData(
-                            it,
-                            DefaultComboBoxModel(paramTemplate.toTypedArray()),
-                            DefaultComboBoxModel(commandTemplate.toTypedArray())
-                        )
+                        ActionConfigDetail.updateData(it, paramTemplate, commandTemplate)
                         detailPanel.add(detailsComponent, BorderLayout.CENTER)
                     } ?: run {
                         detailPanel.add(createEmptyStatePanel(), BorderLayout.CENTER)

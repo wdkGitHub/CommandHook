@@ -37,9 +37,9 @@ class ActionConfigDetail {
 
     companion object {
 
-        var init = false
+        private var init = false
 
-        val actionConfigDetail = ActionConfigDetail()
+        private val actionConfigDetail = ActionConfigDetail()
 
         fun component(): JComponent {
             if (!init) {
@@ -50,8 +50,15 @@ class ActionConfigDetail {
             return actionConfigDetail.rootPanel
         }
 
-        fun updateData(newCurrentConfig: ActionConfig, paramTemplateModel: DefaultComboBoxModel<TemplateConfig>, commandTemplateModel: DefaultComboBoxModel<TemplateConfig>) {
+        fun updateData(newCurrentConfig: ActionConfig, paramTemplateModel: MutableList<TemplateConfig>, commandTemplateModel: MutableList<TemplateConfig>) {
             actionConfigDetail.updateData(newCurrentConfig, paramTemplateModel, commandTemplateModel)
+        }
+
+        fun refreshComboBoxModel(paramTemplateModel: MutableList<TemplateConfig>?, commandTemplateModel: MutableList<TemplateConfig>?) {
+            actionConfigDetail.apply {
+                commandTemplateModel?.let { copyComboBoxModel(it, commandTemplate, currentConfig.commandStr) }
+                paramTemplateModel?.let { copyComboBoxModel(it, paramTemplate, null) }
+            }
         }
     }
 
@@ -130,15 +137,15 @@ class ActionConfigDetail {
         }
     }
 
-    private fun copyComboBoxModel(originalModel: DefaultComboBoxModel<TemplateConfig>, targetModel: DefaultComboBoxModel<TemplateConfig>, selectItem: String?) {
+    private fun copyComboBoxModel(originalModel: MutableList<TemplateConfig>, targetModel: DefaultComboBoxModel<TemplateConfig>, selectItem: String?) {
         targetModel.removeAllElements()
         selectItem?.let { targetModel.addElement(TemplateConfig(name = it, value = selectItem, onlyProject = true)) }
-        for (i in 0 until originalModel.size) {
-            targetModel.addElement(originalModel.getElementAt(i).copy())
+        originalModel.forEach {
+            targetModel.addElement(it)
         }
     }
 
-    private fun updateData(newCurrentConfig: ActionConfig, paramTemplateModel: DefaultComboBoxModel<TemplateConfig>, commandTemplateModel: DefaultComboBoxModel<TemplateConfig>) {
+    private fun updateData(newCurrentConfig: ActionConfig, paramTemplateModel: MutableList<TemplateConfig>, commandTemplateModel: MutableList<TemplateConfig>) {
         currentConfig = newCurrentConfig
         // 合并 commandStr 和 commandTemplateModel 到 commandCombo 数据源
         copyComboBoxModel(commandTemplateModel, commandTemplate, currentConfig.commandStr)
@@ -309,9 +316,9 @@ class ActionConfigDetail {
     }
 
     private fun paramTableJPanel(tableModel: DefaultTableModel) = ToolbarDecorator.createDecorator(paramTable).apply {
-        var index: Int = 0
+        var index = 0
         setAddAction {
-            currentConfig.commandParams.put("id${index}", "desc")
+            currentConfig.commandParams["id${index}"] = "desc"
             tableModel.addRow(arrayOf<Any?>("id${index++}", "desc"))
         }
         setRemoveAction {
