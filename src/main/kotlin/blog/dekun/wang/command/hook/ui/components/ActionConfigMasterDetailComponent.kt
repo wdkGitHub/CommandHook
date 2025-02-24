@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CustomShortcutSet
+import com.intellij.ui.JBColor
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.components.JBList
 import com.intellij.util.PlatformIcons
@@ -62,8 +63,7 @@ class ActionConfigMasterDetailComponent(private val listModel: DefaultListModel<
                     return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus).apply {
                         (this as JLabel).apply {
                             text = (value as? ActionConfig)?.name ?: ""
-//                            icon = if ((value as? ActionConfig)?.enable == true)
-//                                AllIcons.Actions.Execute else AllIcons.Actions.Suspend
+                            foreground = if ((value as? ActionConfig)?.enable == true) JBColor.CYAN else JBColor.GRAY
                             icon = if ((value as? ActionConfig)?.onlyProject == true) AllIcons.Empty else AllIcons.Actions.Share
                         }
                     }
