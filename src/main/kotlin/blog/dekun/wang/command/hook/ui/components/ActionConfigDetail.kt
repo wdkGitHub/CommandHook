@@ -60,6 +60,17 @@ class ActionConfigDetail {
                 paramTemplateModel?.let { copyComboBoxModel(it, paramTemplate, null) }
             }
         }
+
+        fun refreshParamTable() {
+            actionConfigDetail.tableModel.apply {
+                actionConfigDetail.currentConfig.commandParams.clear()
+                for (i in 0 until rowCount) {
+                    val name = getValueAt(i, 0) as String
+                    val value = getValueAt(i, 1) as String
+                    actionConfigDetail.currentConfig.commandParams[name] = value
+                }
+            }
+        }
     }
 
     private lateinit var currentConfig: ActionConfig
@@ -139,10 +150,8 @@ class ActionConfigDetail {
 
     private fun copyComboBoxModel(originalModel: MutableList<TemplateConfig>, targetModel: DefaultComboBoxModel<TemplateConfig>, selectItem: String?) {
         targetModel.removeAllElements()
-        selectItem?.let { targetModel.addElement(TemplateConfig(name = it, value = selectItem, onlyProject = true)) }
-        originalModel.forEach {
-            targetModel.addElement(it)
-        }
+        selectItem?.let { if (it.isNotBlank()) targetModel.addElement(TemplateConfig(name = it, value = selectItem, onlyProject = true)) }
+        originalModel.forEach { if (it.name.isNotBlank() && it.value.isNotBlank()) targetModel.addElement(it) }
     }
 
     private fun updateData(newCurrentConfig: ActionConfig, paramTemplateModel: MutableList<TemplateConfig>, commandTemplateModel: MutableList<TemplateConfig>) {
@@ -227,7 +236,7 @@ class ActionConfigDetail {
 
 
     private fun createUIComponents() {
-        currentConfig = ActionConfig.empty()
+        currentConfig = ActionConfig()
         rootPanel = JPanel().apply {
             layout = BorderLayout()
             border = BorderFactory.createEmptyBorder(3, 3, 3, 3)
@@ -309,8 +318,7 @@ class ActionConfigDetail {
                         preferredSize = Dimension(60, preferredSize.height)
                         border = BorderFactory.createEmptyBorder(0, 0, 0, 3)
                         horizontalAlignment = SwingConstants.RIGHT
-                    }
-                    ).apply {
+                    }).apply {
                         border = BorderFactory.createEmptyBorder(0, 0, 0, 3)
                     }
                 }
@@ -324,7 +332,6 @@ class ActionConfigDetail {
     private fun paramTableJPanel(tableModel: DefaultTableModel) = ToolbarDecorator.createDecorator(paramTable).apply {
         var index = 0
         setAddAction {
-            currentConfig.commandParams["id${index}"] = "desc"
             tableModel.addRow(arrayOf<Any?>("id${index++}", "desc"))
         }
         setRemoveAction {
@@ -333,7 +340,6 @@ class ActionConfigDetail {
                 val lastSelectedRow = selectedRows.last()
                 for (i in selectedRows.size - 1 downTo 0) {
                     val rowIndex = selectedRows[i]
-                    currentConfig.commandParams.remove(tableModel.getValueAt(rowIndex, 0))
                     tableModel.removeRow(rowIndex)
                 }
                 if (tableModel.rowCount > 0) {
@@ -354,7 +360,6 @@ class ActionConfigDetail {
                 val result = JOptionPane.showConfirmDialog(null, paramsCombo, "选择命令", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE)
 
                 if (result == JOptionPane.OK_OPTION) {
-                    commandParams?.let { currentConfig.commandParams.putAll(it.associate { it.split("=").first() to it.split("=").last() }) }
                     commandParams?.forEach { tableModel.addRow(arrayOf(it.split("=").first(), it.split("=").last())) }
                 }
             }

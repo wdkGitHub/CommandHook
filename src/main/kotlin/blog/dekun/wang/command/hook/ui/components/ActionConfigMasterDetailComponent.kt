@@ -20,9 +20,7 @@ import java.awt.event.MouseEvent
 import javax.swing.*
 
 
-class ActionConfigMasterDetailComponent(private val listModel: DefaultListModel<ActionConfig>,
-                                        private var paramTemplate: MutableList<TemplateConfig>,
-                                        private var commandTemplate: MutableList<TemplateConfig>) {
+class ActionConfigMasterDetailComponent(private val listModel: DefaultListModel<ActionConfig>, private var paramTemplate: MutableList<TemplateConfig>, private var commandTemplate: MutableList<TemplateConfig>) {
 
     private val masterList = JBList(listModel)
 
@@ -53,13 +51,7 @@ class ActionConfigMasterDetailComponent(private val listModel: DefaultListModel<
     private fun createMasterPanel() {
         masterList.apply {
             cellRenderer = object : DefaultListCellRenderer() {
-                override fun getListCellRendererComponent(
-                    list: JList<*>?,
-                    value: Any?,
-                    index: Int,
-                    isSelected: Boolean,
-                    cellHasFocus: Boolean
-                ): Component {
+                override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
                     return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus).apply {
                         (this as JLabel).apply {
                             text = (value as? ActionConfig)?.name ?: ""
@@ -77,7 +69,7 @@ class ActionConfigMasterDetailComponent(private val listModel: DefaultListModel<
             setAddAction {
                 val newName = JOptionPane.showInputDialog("New Action Name:")
                 newName?.takeIf { it.isNotBlank() }?.let {
-                    val newConfig = ActionConfig(it, "")
+                    val newConfig = ActionConfig(name = it, commandStr = "")
                     listModel.addElement(newConfig)
                     masterList.selectedIndex += 1
                 }

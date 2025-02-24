@@ -15,28 +15,31 @@ enum class ActionPosition {
 }
 
 data class ActionConfig(
-    var name: String,
-    var enable: Boolean = true, var onlyProject: Boolean = true,
+    var name: String = "",
+    var enable: Boolean = true,
+    var onlyProject: Boolean = true,
     var workingDirectory: String? = null,
     var commandParams: MutableMap<String, String> = mutableMapOf(),
-    var commandStr: String,
+    var commandStr: String = "",
     var position: ActionPosition = ActionPosition.DEFAULT,
+    var index: Int = 0
 ) {
 
-    companion object {
-
-        fun default(name: String, commandStr: String): ActionConfig {
-            return ActionConfig(name, commandStr)
-        }
-
-        fun empty(): ActionConfig {
-            return ActionConfig("", false, true, null, mutableMapOf(), "", ActionPosition.DEFAULT)
-        }
-    }
-
-    constructor(name: String, commandStr: String) : this(name, true, true, null, mutableMapOf(), commandStr, ActionPosition.DEFAULT)
-    constructor(name: String, commandStr: String, position: ActionPosition) : this(name, true, true, null, mutableMapOf(), commandStr, position)
+    fun copy() = ActionConfig(
+        name = name,
+        enable = enable,
+        onlyProject = onlyProject,
+        workingDirectory = workingDirectory,
+        commandParams = commandParams.toMutableMap(),
+        commandStr = commandStr,
+        position = position,
+        index = index
+    )
 }
 
-data class TemplateConfig(val name: String = "", val value: String = "", val onlyProject: Boolean = true)
-
+data class TemplateConfig(
+    var name: String = "",
+    var value: String = "",
+    var onlyProject: Boolean = true,
+    var index: Int = 0
+)

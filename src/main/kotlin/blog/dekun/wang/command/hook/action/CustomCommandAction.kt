@@ -2,17 +2,16 @@ package blog.dekun.wang.command.hook.action
 
 import blog.dekun.wang.command.hook.action.base.BaseAnAction
 import blog.dekun.wang.command.hook.constants.Constant
-import blog.dekun.wang.command.hook.data.ConfigInfo
-import blog.dekun.wang.command.hook.services.ServiceUtils
+import blog.dekun.wang.command.hook.data.ActionConfig
+import blog.dekun.wang.command.hook.data.ActionPosition
+import blog.dekun.wang.command.hook.services.ActionConfigService
 import blog.dekun.wang.command.hook.utils.RunToolWindowUtil
-import blog.dekun.wang.command.hook.utils.Utils
 import com.intellij.icons.AllIcons
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.vfs.isFile
+import com.intellij.openapi.project.Project
 
 /**
  *
@@ -23,128 +22,72 @@ import com.intellij.openapi.vfs.isFile
  */
 
 
-class CustomCommandAction(private val configInfo: ConfigInfo) : BaseAnAction() {
+class CustomCommandAction(private val actionConfig: ActionConfig) : BaseAnAction() {
 
     companion object {
 
-        fun modifyAction(add: List<ConfigInfo>? = null, remove: List<ConfigInfo>? = null) {
-            remove?.let {
-                remove.forEach {
-                    removeAction(it)
-                }
-            }
-            add?.let {
-                add.forEach { addAction(it) }
-            }
-        }
-
-        private fun getActionId(config: ConfigInfo): Array<String> {
-            val baseActionId = getActionId(config.name, false)
-            return if (config.isRightClick == true) {
-                arrayOf(baseActionId, getActionId(config.name, true))
-            } else {
-                arrayOf(baseActionId)
-            }
-        }
-
-        private fun getActionId(name: String, isRightClick: Boolean): String {
-            val groupId = if (isRightClick) Constant.ACTION_GROUP_ID_RIGHT_CLICK else Constant.ACTION_GROUP_ID
-            return "$groupId.$name"
-        }
-
-        private fun addAction(config: ConfigInfo) {
+        fun modifyAction(configsToAdd: List<ActionConfig>? = null, configsToRemove: List<ActionConfig>? = null) {
             val actionManager = ActionManager.getInstance()
-            if (config.isEnable != true) return
-            if (config.isRightClick == true) {
-                // 右键逻辑处理
-                println("右键")
-            } else {
-                val actionId = getActionId(config.name, false)
-                if (actionManager.getAction(actionId) != null) {
-                    return
-                }
-                val configInfoMainToolbarRight = config.takeIf { it.isRightClick != true } ?: config.copy().apply { isRightClick = false }
-                val action = CustomCommandAction(configInfoMainToolbarRight)
-                actionManager.registerAction(actionId, action)
-                val commandExtensions = actionManager.getAction(Constant.ACTION_GROUP_ID)
-                if (commandExtensions is DefaultActionGroup) {
-                    commandExtensions.add(action)
-                }
+            configsToRemove?.forEach { removeAction(it, actionManager) }
+            configsToAdd?.forEach { addAction(it, actionManager) }
+        }
+
+        private fun generateActionId(actionConfig: ActionConfig): String {
+            return "${actionConfig.name}_${actionConfig.position}".hashCode().toString()
+        }
+
+        private fun getActionGroup(position: ActionPosition, actionManager: ActionManager): DefaultActionGroup? {
+            val actionGroupId = when (position) {
+                ActionPosition.DEFAULT -> Constant.ACTION_GROUP_ID
+                ActionPosition.CENTRAL_TOOLBAR -> Constant.MAIN_TOOLBAR_CENTER
+                ActionPosition.RIGHT_CLICK -> return null
+            }
+            return (actionManager.getAction(actionGroupId) as? DefaultActionGroup).also {
+                if (it == null) println("Action group not found for position: $position")
             }
         }
 
-        private fun removeAction(config: ConfigInfo) {
-            val actionManager = ActionManager.getInstance()
-            fun remove(actionId: String, actionGroupId: String) {
-                val action = actionManager.getAction(actionId) ?: return
-                (actionManager.getAction(actionGroupId) as? DefaultActionGroup)?.remove(action)
-                actionManager.unregisterAction(actionId)
+        private fun addAction(actionConfig: ActionConfig, actionManager: ActionManager) {
+            if (!actionConfig.enable) return
+            val actionId = generateActionId(actionConfig)
+            if (actionManager.getAction(actionId) != null) {
+                return
             }
-            getActionId(config).forEach { actionId ->
-                when {
-                    actionId.startsWith(Constant.ACTION_GROUP_ID) -> remove(
-                        actionId, Constant.ACTION_GROUP_ID
-                    )
+            val group = getActionGroup(actionConfig.position, actionManager) ?: return
+            CustomCommandAction(actionConfig).apply {
+                actionManager.registerAction(actionId, this)
+                group.add(this)
+            }
+        }
 
-                    actionId.startsWith(Constant.ACTION_GROUP_ID_RIGHT_CLICK) -> remove(
-                        actionId, Constant.ACTION_GROUP_ID_RIGHT_CLICK
-                    )
-                }
-            }
+        private fun removeAction(actionConfig: ActionConfig, actionManager: ActionManager) {
+            val actionId = generateActionId(actionConfig)
+            val action = actionManager.getAction(actionId) ?: return
+            getActionGroup(actionConfig.position, actionManager)?.remove(action)
+            actionManager.unregisterAction(actionId)
         }
 
     }
 
-    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+    private fun isConfigValid(project: Project?): Boolean {
+        return ActionConfigService.getConfigs(project).any { it.name == actionConfig.name }
+    }
 
     override fun update(event: AnActionEvent) {
-        if (event.project == null) {
-            event.presentation.isEnabledAndVisible = false
-            return
-        }
-        if (ServiceUtils.getConfigInfoList(event.project).none { it.name == configInfo.name }) {
-            event.presentation.isEnabledAndVisible = false
-            return
-        }
-        val name = configInfo.name.trim()
-        event.presentation.text = name
-        if (name.isBlank()) {
-            event.presentation.isEnabledAndVisible = false
-            return
-        }
-        val virtualFile = Utils.getVirtualFile(event)
-        val isEnabled = configInfo.isEnable == true
         event.presentation.isEnabledAndVisible = when {
-            virtualFile == null || configInfo.isRightClick != true -> isEnabled
-            configInfo.isTargetFile == true && configInfo.isTargetFolder == true -> isEnabled
-            virtualFile.isDirectory && configInfo.isTargetFolder == true -> isEnabled
-            virtualFile.isFile && configInfo.isTargetFile == true -> isEnabled
-            else -> false
+            event.project == null -> false
+            actionConfig.name.isBlank() -> false
+            !isConfigValid(event.project) -> false
+            else -> actionConfig.enable
         }
-        AllIcons.Actions.Resume
-        event.presentation.icon = if (configInfo.isApp == true) AllIcons.Actions.Resume else AllIcons.Actions.Execute
+        event.presentation.text = actionConfig.name.trim()
+        event.presentation.icon = if (actionConfig.onlyProject) AllIcons.Actions.Execute else AllIcons.Actions.Resume
     }
 
     override fun actionPerformed(event: AnActionEvent) {
-        val project = event.project ?: return
-        val regex = Regex("\\{\\{([A-Z_]+)}}")
-        var commandStr = configInfo.commandStr?.trim()
-        if (commandStr.isNullOrEmpty()) {
-            Utils.showNotification(project, configInfo.name, "commandStr is empty", NotificationType.ERROR)
-            return
-        }
-        commandStr = regex.replace(commandStr) { matchResult -> System.getenv(matchResult.groupValues[1]) ?: matchResult.value }
-        if (configInfo.isTargetFile == true || configInfo.isTargetFolder == true) {
-            val virtualFile = Utils.getVirtualFile(event)
-            if (virtualFile != null) {
-                val path = configInfo.executionDir?.takeIf { it.isNotBlank() } ?: if (virtualFile.isDirectory) virtualFile.path.substringBeforeLast("/")
-                else virtualFile.path
-                RunToolWindowUtil.executeWithRealTimeOutput(project, configInfo.name, commandStr, path)
-            } else {
-                RunToolWindowUtil.executeWithRealTimeOutput(project, configInfo.name, commandStr)
-            }
-        } else {
-            RunToolWindowUtil.executeWithRealTimeOutput(project, configInfo.name, commandStr)
+        event.project?.let {
+            RunToolWindowUtil.executeWithRealTimeOutput(it, actionConfig)
         }
     }
 
