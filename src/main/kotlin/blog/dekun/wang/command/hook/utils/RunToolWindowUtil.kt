@@ -28,7 +28,7 @@ object RunToolWindowUtil {
         val regex = Regex("\\{\\{([a-zA-Z_]+)}}")
         var commandStr = actionConfig.commandStr.trim()
 
-        if (commandStr.isEmpty()) {
+        if (commandStr.isBlank()) {
             Utils.showNotification(project, actionConfig.name, "commandStr is empty", NotificationType.ERROR)
             return
         }
