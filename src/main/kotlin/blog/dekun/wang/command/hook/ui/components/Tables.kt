@@ -94,8 +94,25 @@ class Tables { companion object {
         val panel = ToolbarDecorator.createDecorator(table).setAddAction {
             model.addRow(arrayOf<Any>("", "", true))
         }.setRemoveAction {
-            table.selectedRows.sortedDescending().forEach { row ->
-                model.removeRow(row)
+            // 获取选中的行
+            val selectedRows = table.selectedRows.sortedDescending()
+            // 如果选中了行，进行删除
+            if (selectedRows.isNotEmpty()) {
+                // 记录最后选中的行索引（删除前的选中行）
+                val lastSelectedRow = selectedRows.first()
+                // 删除选中的行
+                selectedRows.forEach { row ->
+                    model.removeRow(row)
+                }
+                val newSelectionIndex = when {
+                    model.rowCount == 0 -> -1
+                    lastSelectedRow >= model.rowCount -> model.rowCount - 1
+                    else -> lastSelectedRow
+                }
+
+                if (newSelectionIndex >= 0) {
+                    table.selectionModel.setSelectionInterval(newSelectionIndex, newSelectionIndex)
+                }
             }
         }.createPanel().apply {
             border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
