@@ -66,15 +66,22 @@ class ActionConfigMasterDetailComponent(private val listModel: DefaultListModel<
 
         val toolbarDecorator = ToolbarDecorator.createDecorator(masterList).apply {
             setAddAction {
-                val newName = JOptionPane.showInputDialog("New Action Name:")
-                newName?.takeIf { it.isNotBlank() }?.let {
-                    val newConfig = ActionConfig(name = it, commandStr = "")
-                    listModel.addElement(newConfig)
-                    masterList.selectedIndex += 1
+                val newName = JOptionPane.showInputDialog(null, "名称", "添加Action", JOptionPane.PLAIN_MESSAGE)
+                if (newName.isNullOrBlank()) {
+                    return@setAddAction
                 }
+                // 验证是否有重复的 Action 名称
+                val isDuplicate = listModel.elements().toList().any { it?.name == newName }
+                if (isDuplicate) {
+                    JOptionPane.showMessageDialog(null, "重复的名称，请重新输入.", "", JOptionPane.PLAIN_MESSAGE)
+                    return@setAddAction
+                }
+                val newConfig = ActionConfig(name = newName, commandStr = "")
+                listModel.addElement(newConfig)
+                masterList.selectedIndex += 1
             }.setEditAction {
                 selectedConfig?.let {
-                    val newName = JOptionPane.showInputDialog(null, "请输入名称：", "添加命令", JOptionPane.PLAIN_MESSAGE, null, null, it.name) as String
+                    val newName = JOptionPane.showInputDialog(null, "请输入名称：", "修改名称", JOptionPane.PLAIN_MESSAGE, null, null, it.name) as String
                     if (newName.isNotBlank()) {
                         it.name = newName
                         masterList.repaint()
