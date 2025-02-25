@@ -107,6 +107,7 @@ class ActionConfigService private constructor() {
             val second = mutableListOf<T>()
             filterNotNull().forEachIndexed { index, item ->
                 if (item is TemplateConfig) item.index = index
+                if (item is ActionConfig) item.index = index
                 if (predicate(item)) first.add(item) else second.add(item)
             }
             return Pair(first, second)

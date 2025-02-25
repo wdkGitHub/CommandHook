@@ -7,11 +7,14 @@ import blog.dekun.wang.command.hook.data.ActionPosition
 import blog.dekun.wang.command.hook.services.ActionConfigService
 import blog.dekun.wang.command.hook.utils.RunToolWindowUtil
 import com.intellij.icons.AllIcons
+import com.intellij.ide.ChangeProjectIconPalette
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
+import com.intellij.util.ui.AvatarIcon
 
 /**
  *
@@ -19,6 +22,7 @@ import com.intellij.openapi.project.Project
  * <p>
  * Email :  wangdekunemail@gmail.com
  *
+ * @see  com.intellij.openapi.wm.impl.welcomeScreen.projectActions.ChangeProjectIconAction ICON
  */
 
 
@@ -84,6 +88,14 @@ class CustomCommandAction(private val actionConfig: ActionConfig) : BaseAnAction
         event.presentation.text = actionConfig.name.trim()
         if (actionConfig.position == ActionPosition.DEFAULT) {
             event.presentation.icon = if (actionConfig.onlyProject) AllIcons.Actions.Execute else AllIcons.Actions.Resume
+        } else {
+            event.presentation.icon = AvatarIcon(
+                targetSize = Registry.intValue("ide.project.icon.size", 20),
+                arcRatio = 0.4,
+                gradientSeed = actionConfig.hashCode().toString(),
+                avatarName = actionConfig.name,
+                palette = ChangeProjectIconPalette(actionConfig.index)
+            ).withIconPreScaled(false)
         }
     }
 
