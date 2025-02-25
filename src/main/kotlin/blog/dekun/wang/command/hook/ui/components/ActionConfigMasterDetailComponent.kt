@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CustomShortcutSet
+import com.intellij.openapi.ui.Splitter
 import com.intellij.ui.JBColor
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.components.JBList
@@ -29,14 +30,12 @@ class ActionConfigMasterDetailComponent(private val listModel: DefaultListModel<
     private val detailPanel = JPanel(BorderLayout()).apply {
         add(createEmptyStatePanel(), BorderLayout.CENTER)
     }
-    private val splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT).apply {
-        isContinuousLayout = true
-        dividerSize = 0
-        resizeWeight = 0.1
-        rightComponent = detailPanel
-        border = null
-    }
 
+    private val splitPane = Splitter(false, 0.23f).apply {
+        firstComponent = ToolbarDecorator.createDecorator(masterList).createPanel()
+        secondComponent = detailPanel
+        dividerWidth = 3
+    }
 
     private val selectedConfig: ActionConfig?
         get() = masterList.selectedValue
@@ -112,7 +111,7 @@ class ActionConfigMasterDetailComponent(private val listModel: DefaultListModel<
                 }
             })
         }
-        splitPane.leftComponent = toolbarDecorator.createPanel()
+        splitPane.firstComponent = toolbarDecorator.createPanel()
     }
 
 
