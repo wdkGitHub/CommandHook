@@ -148,16 +148,21 @@ class ActionConfigDetail {
         }
     }
 
-    private fun copyComboBoxModel(originalModel: MutableList<TemplateConfig>, targetModel: DefaultComboBoxModel<TemplateConfig>, selectItem: String?) {
+    private fun copyComboBoxModel(originalModel: MutableList<TemplateConfig>, targetModel: DefaultComboBoxModel<TemplateConfig>, selectItem: String?, checkBlank: Boolean = true) {
         targetModel.removeAllElements()
-        selectItem?.let { if (it.isNotBlank()) targetModel.addElement(TemplateConfig(name = it, value = selectItem, onlyProject = true)) }
-        originalModel.forEach { if (it.name.isNotBlank() && it.value.isNotBlank()) targetModel.addElement(it) }
+        if (checkBlank) {
+            selectItem?.let { if (it.isNotBlank()) targetModel.addElement(TemplateConfig(name = it, value = selectItem, onlyProject = true)) }
+            originalModel.forEach { if (it.name.isNotBlank() && it.value.isNotBlank()) targetModel.addElement(it) }
+        } else {
+            selectItem?.let { targetModel.addElement(TemplateConfig(name = it, value = selectItem, onlyProject = true)) }
+            originalModel.forEach { targetModel.addElement(it) }
+        }
     }
 
     private fun updateData(newCurrentConfig: ActionConfig, paramTemplateModel: MutableList<TemplateConfig>, commandTemplateModel: MutableList<TemplateConfig>) {
         currentConfig = newCurrentConfig
         // 合并 commandStr 和 commandTemplateModel 到 commandCombo 数据源
-        copyComboBoxModel(commandTemplateModel, commandTemplate, currentConfig.commandStr)
+        copyComboBoxModel(commandTemplateModel, commandTemplate, currentConfig.commandStr, false)
         // 合并 commandParams 和 paramTemplateModel 到 paramsCombo 数据源
         copyComboBoxModel(paramTemplateModel, paramTemplate, null)
         //========================
@@ -184,7 +189,11 @@ class ActionConfigDetail {
 
         // 渲染器：下拉框的显示内容为 TemplateConfig 的 name
         renderer = ListCellRenderer { list, value, _, isSelected, _ ->
-            val name = value?.let { it.name + " : " + value.value.replace("\n".toRegex(), " ") } ?: ""
+            val name = if (value.name.isNotBlank()) {
+                value?.let { it.name + " : " + value.value.replace("\n".toRegex(), " ") }
+            } else {
+                ""
+            } ?: ""
             JLabel(if (name.length > rootPanel.width / 10) name.substring(0, rootPanel.width / 10) + "..." else name).apply {
                 isOpaque = true
                 background = if (isSelected) list?.selectionBackground else background

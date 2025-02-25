@@ -78,7 +78,7 @@ class ActionConfigMasterDetailComponent(private val listModel: DefaultListModel<
                 }
                 val newConfig = ActionConfig(name = newName, commandStr = "")
                 listModel.addElement(newConfig)
-                masterList.selectedIndex += 1
+                masterList.selectedIndex = listModel.size - 1
             }.setEditAction {
                 selectedConfig?.let {
                     val newName = JOptionPane.showInputDialog(null, "请输入名称：", "修改名称", JOptionPane.PLAIN_MESSAGE, null, null, it.name) as String

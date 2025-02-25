@@ -94,6 +94,7 @@ class CustomCommandAction(private val actionConfig: ActionConfig) : BaseAnAction
             !isConfigValid(event.project) -> false
             else -> actionConfig.enable
         }
+        event.presentation.isEnabled = actionConfig.commandStr.isNotBlank()
         event.presentation.text = actionConfig.name.trim()
         if (actionConfig.position == ActionPosition.DEFAULT) {
             event.presentation.icon = if (actionConfig.onlyProject) AllIcons.Actions.Execute else AllIcons.Actions.Resume
