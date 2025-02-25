@@ -32,12 +32,18 @@ class CustomCommandAction(private val actionConfig: ActionConfig) : BaseAnAction
 
         fun modifyAction(configsToAdd: List<ActionConfig>? = null, configsToRemove: List<ActionConfig>? = null) {
             val actionManager = ActionManager.getInstance()
-            configsToRemove?.forEach { removeAction(it, actionManager) }
-            configsToAdd?.forEach { addAction(it, actionManager) }
+            configsToRemove?.forEach {
+//                println("删除：${it.name}  ${it.position}")
+                removeAction(it, actionManager)
+            }
+            configsToAdd?.forEach {
+//                println("添加：${it.name}  ${it.position}")
+                addAction(it, actionManager)
+            }
         }
 
         private fun generateActionId(actionConfig: ActionConfig): String {
-            return "${actionConfig.name}_${actionConfig.position}".hashCode().toString()
+            return actionConfig.name.hashCode().toString()
         }
 
         private fun getActionGroup(position: ActionPosition, actionManager: ActionManager): DefaultActionGroup? {
@@ -67,6 +73,9 @@ class CustomCommandAction(private val actionConfig: ActionConfig) : BaseAnAction
         private fun removeAction(actionConfig: ActionConfig, actionManager: ActionManager) {
             val actionId = generateActionId(actionConfig)
             val action = actionManager.getAction(actionId) ?: return
+//            ActionPosition.entries.forEach {
+//                getActionGroup(it, actionManager)?.remove(action)
+//            }
             getActionGroup(actionConfig.position, actionManager)?.remove(action)
             actionManager.unregisterAction(actionId)
         }

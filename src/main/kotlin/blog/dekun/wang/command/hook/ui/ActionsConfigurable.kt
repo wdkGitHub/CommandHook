@@ -76,14 +76,14 @@ class ActionsConfigurable(val project: Project) : Configurable {
     }
 
     override fun apply() {
-        val actionConfigList: MutableList<ActionConfig> = mutableListOf()
-        for (i in 0 until defaultListModel.size) {
-            actionConfigList.add(defaultListModel.get(i))
-        }
+        val configs = ActionConfigService.getConfigs(project)
+        val actionConfigList = (0 until defaultListModel.size).map { defaultListModel.get(it) }
+        val addActionConfigs = actionConfigList.filterNot { configs.contains(it) }
+        val removeActionConfigs = configs.filterNot { actionConfigList.contains(it) }
+        CustomCommandAction.modifyAction(addActionConfigs, removeActionConfigs)
         ActionConfigService.saveConfigs(project, actionConfigList)
         ActionConfigService.saveParamTemplates(project, paramTemplate)
         ActionConfigService.saveCommandTemplates(project, commandTemplate)
-        CustomCommandAction.modifyAction(actionConfigList, ActionConfigService.getConfigs(project))
         clear()
     }
 
