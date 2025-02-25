@@ -78,9 +78,7 @@ class ActionsConfigurable(val project: Project) : Configurable {
     override fun apply() {
         val configs = ActionConfigService.getConfigs(project)
         val actionConfigList = (0 until defaultListModel.size).map { defaultListModel.get(it) }
-        val addActionConfigs = actionConfigList.filterNot { configs.contains(it) }
-        val removeActionConfigs = configs.filterNot { actionConfigList.contains(it) }
-        CustomCommandAction.modifyAction(addActionConfigs, removeActionConfigs)
+        CustomCommandAction.modifyAction(actionConfigList, configs)
         ActionConfigService.saveConfigs(project, actionConfigList)
         ActionConfigService.saveParamTemplates(project, paramTemplate)
         ActionConfigService.saveCommandTemplates(project, commandTemplate)
