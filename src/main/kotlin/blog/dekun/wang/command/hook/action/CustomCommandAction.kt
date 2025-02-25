@@ -82,7 +82,9 @@ class CustomCommandAction(private val actionConfig: ActionConfig) : BaseAnAction
             else -> actionConfig.enable
         }
         event.presentation.text = actionConfig.name.trim()
-        event.presentation.icon = if (actionConfig.onlyProject) AllIcons.Actions.Execute else AllIcons.Actions.Resume
+        if (actionConfig.position == ActionPosition.DEFAULT) {
+            event.presentation.icon = if (actionConfig.onlyProject) AllIcons.Actions.Execute else AllIcons.Actions.Resume
+        }
     }
 
     override fun actionPerformed(event: AnActionEvent) {

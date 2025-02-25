@@ -1,5 +1,6 @@
 package blog.dekun.wang.command.hook.ui
 
+import blog.dekun.wang.command.hook.action.CustomCommandAction
 import blog.dekun.wang.command.hook.data.ActionConfig
 import blog.dekun.wang.command.hook.data.TemplateConfig
 import blog.dekun.wang.command.hook.services.ActionConfigService
@@ -82,6 +83,7 @@ class ActionsConfigurable(val project: Project) : Configurable {
         ActionConfigService.saveConfigs(project, actionConfigList)
         ActionConfigService.saveParamTemplates(project, paramTemplate)
         ActionConfigService.saveCommandTemplates(project, commandTemplate)
+        CustomCommandAction.modifyAction(actionConfigList, ActionConfigService.getConfigs(project))
         clear()
     }
 
