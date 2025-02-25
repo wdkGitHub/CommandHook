@@ -31,7 +31,7 @@ class ActionConfigMasterDetailComponent(private val listModel: DefaultListModel<
     }
     private val splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT).apply {
         isContinuousLayout = true
-        dividerSize = 1
+        dividerSize = 0
         resizeWeight = 0.1
         rightComponent = detailPanel
         border = null
@@ -112,10 +112,7 @@ class ActionConfigMasterDetailComponent(private val listModel: DefaultListModel<
                 }
             })
         }
-        splitPane.leftComponent = toolbarDecorator.createPanel().apply {
-            border = null
-
-        }
+        splitPane.leftComponent = toolbarDecorator.createPanel()
     }
 
 
