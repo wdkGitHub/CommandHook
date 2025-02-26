@@ -38,18 +38,14 @@ class ActionConfigDetail {
 
     companion object {
 
-        private var init = false
 
         private lateinit var actionConfigDetail: ActionConfigDetail
 
         fun component(project: Project): JComponent {
-            if (!init) {
-                actionConfigDetail = ActionConfigDetail()
-                actionConfigDetail.createUIComponents()
-                actionConfigDetail.setupEventListeners()
-                actionConfigDetail.project = project
-                init = true
-            }
+            actionConfigDetail = ActionConfigDetail()
+            actionConfigDetail.createUIComponents()
+            actionConfigDetail.setupEventListeners()
+            actionConfigDetail.project = project
             return actionConfigDetail.rootPanel
         }
 
