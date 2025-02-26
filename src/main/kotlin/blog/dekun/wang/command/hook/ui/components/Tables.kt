@@ -91,33 +91,55 @@ class Tables { companion object {
             }
         }
 
-        val panel = ToolbarDecorator.createDecorator(table).setAddAction {
-            model.addRow(arrayOf<Any>("", "", true))
-        }.setRemoveAction {
-            // 获取选中的行
-            val selectedRows = table.selectedRows.sortedDescending()
-            // 如果选中了行，进行删除
-            if (selectedRows.isNotEmpty()) {
-                // 记录最后选中的行索引（删除前的选中行）
-                val lastSelectedRow = selectedRows.first()
-                // 删除选中的行
-                selectedRows.forEach { row ->
-                    model.removeRow(row)
+        return ToolbarDecorator.createDecorator(table)
+            .setAddAction {
+                model.addRow(arrayOf<Any>("", "", true))
+            }.setRemoveAction {
+                // 获取选中的行
+                val selectedRows = table.selectedRows.sortedDescending()
+                // 如果选中了行，进行删除
+                if (selectedRows.isNotEmpty()) {
+                    // 记录最后选中的行索引（删除前的选中行）
+                    val lastSelectedRow = selectedRows.first()
+                    // 删除选中的行
+                    selectedRows.forEach { row ->
+                        model.removeRow(row)
+                    }
+                    val newSelectionIndex = when {
+                        model.rowCount == 0 -> -1
+                        lastSelectedRow >= model.rowCount -> model.rowCount - 1
+                        else -> lastSelectedRow
+                    }
+
+                    if (newSelectionIndex >= 0) {
+                        table.selectionModel.setSelectionInterval(newSelectionIndex, newSelectionIndex)
+                    }
                 }
-                val newSelectionIndex = when {
-                    model.rowCount == 0 -> -1
-                    lastSelectedRow >= model.rowCount -> model.rowCount - 1
-                    else -> lastSelectedRow
+            }.setMoveUpAction {
+                moveRow(table, model, -1)
+            }.setMoveDownAction {
+                moveRow(table, model, 1)
+            }.createPanel().apply {
+                border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
+            }
+    }
+
+    private fun moveRow(table: JBTable, model: DefaultTableModel, offset: Int) {
+        val selectedRows = table.selectedRows
+        if (selectedRows.isNotEmpty()) {
+            val row = if (offset < 0) selectedRows.first() else selectedRows.last()
+            if ((row + offset >= 0) && (row + offset < model.rowCount)) {
+                val tempRow = Array<Any>(model.columnCount) { model.getValueAt(row, it) }
+                val targetRow = Array<Any>(model.columnCount) { model.getValueAt(row + offset, it) }
+
+                for (column in 0 until model.columnCount) {
+                    model.setValueAt(tempRow[column], row + offset, column)
+                    model.setValueAt(targetRow[column], row, column)
                 }
 
-                if (newSelectionIndex >= 0) {
-                    table.selectionModel.setSelectionInterval(newSelectionIndex, newSelectionIndex)
-                }
+                table.selectionModel.setSelectionInterval(row + offset, row + offset)
             }
-        }.createPanel().apply {
-            border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
         }
-        return panel
     }
 
     fun commandTables(commandData: MutableList<TemplateConfig>, onDataChanged: (() -> Unit)? = null): JPanel {
