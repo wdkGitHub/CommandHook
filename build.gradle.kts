@@ -74,13 +74,13 @@ dependencies {
     intellijPlatform {
         version = providers.gradleProperty("plugin.version").get()
         intellijIdeaUltimate("2024.3.2")
-        bundledPlugin("hg4idea")
+//        bundledPlugin("hg4idea")
         bundledPlugin("Git4Idea")
         ////        com.jetbrains.plugins.webDeployment.ui.config.DeploymentServersEditor
         //        com.jetbrains.plugins.webDeployment.actions.ConfigureDeploymentAction"
         //ID = WebDeployment.Configuration Name = 配置… GroupId = [PublishGroup] Class = com.jetbrains.plugins.webDeployment.actions.ConfigureDeploymentAction
 //        intellijIdeaCommunity("2024.3.1")
-        bundledPlugin("com.jetbrains.plugins.webDeployment")
+//        bundledPlugin("com.jetbrains.plugins.webDeployment")
 //        bundledPlugin("Git4Idea")
 //        bundledPlugin("org.jetbrains.idea.maven")
 //        bundledPlugin("org.jetbrains.idea.maven.ext")
