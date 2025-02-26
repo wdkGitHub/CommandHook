@@ -1,3 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugins>
+    <plugin>
+        <id>command.hook.blog.dekun.wang</id>
+        <name>CommandHook</name>
+        <version>0.0.17-SNAPSHOT</version>
+        <idea-version since-build="243" />
+        <vendor email="wangdekunemail@gmeil.com" url="https://blog.dekun.wang">WangDekun</vendor>
+        <description><![CDATA[IDEA扩展插件，用于在IDEA中执行命令行命令]]></description>
+        <change-notes><![CDATA[<p> 懒得写更新日志，但写了这句就不算没写。</p>]]></change-notes>
+        <download-url>https://github.com/wdkGitHub/CommandHook/releases/download/v0.0.17-SNAPSHOT/CommandHook-0.0.17-SNAPSHOT.zip</download-url>
+    </plugin>
 </plugins>
