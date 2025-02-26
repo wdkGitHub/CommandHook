@@ -47,7 +47,7 @@ class ActionsConfigurable(val project: Project) : Configurable {
         return JBTabbedPane().apply {
             preferredSize = Dimension(900, 600)
             addTab("Actions", JPanel(BorderLayout()).apply {
-                add(ActionConfigMasterDetailComponent(defaultListModel, paramTemplate, commandTemplate).getComponent(), BorderLayout.CENTER)
+                add(ActionConfigMasterDetailComponent(project, defaultListModel, paramTemplate, commandTemplate).getComponent(), BorderLayout.CENTER)
             })
             addTab("命令模板", Tables.commandTables(commandTemplate) {
                 ActionConfigDetail.refreshComboBoxModel(null, commandTemplate)

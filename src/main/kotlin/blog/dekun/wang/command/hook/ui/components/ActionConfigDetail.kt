@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileChooser.FileChooser
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.ui.ToolbarDecorator
@@ -39,12 +40,14 @@ class ActionConfigDetail {
 
         private var init = false
 
-        private val actionConfigDetail = ActionConfigDetail()
+        private lateinit var actionConfigDetail: ActionConfigDetail
 
-        fun component(): JComponent {
+        fun component(project: Project): JComponent {
             if (!init) {
+                actionConfigDetail = ActionConfigDetail()
                 actionConfigDetail.createUIComponents()
                 actionConfigDetail.setupEventListeners()
+                actionConfigDetail.project = project
                 init = true
             }
             return actionConfigDetail.rootPanel
@@ -73,6 +76,7 @@ class ActionConfigDetail {
         }
     }
 
+    private lateinit var project: Project
     private lateinit var currentConfig: ActionConfig
 
     private var paramTemplate: DefaultComboBoxModel<TemplateConfig> = DefaultComboBoxModel<TemplateConfig>()
@@ -108,7 +112,7 @@ class ActionConfigDetail {
 
         workingDirectory.addActionListener {
             val chooser = FileChooserDescriptor(false, true, false, false, false, false)
-            val selectedDir = FileChooser.chooseFile(chooser, null, null)
+            val selectedDir = FileChooser.chooseFile(chooser, project, project.projectFile?.parent?.parent)
             selectedDir?.let {
                 workingDirectory.text = it.path
             }

@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CustomShortcutSet
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Splitter
 import com.intellij.ui.JBColor
 import com.intellij.ui.ToolbarDecorator
@@ -21,11 +22,11 @@ import java.awt.event.MouseEvent
 import javax.swing.*
 
 
-class ActionConfigMasterDetailComponent(private val listModel: DefaultListModel<ActionConfig>, private var paramTemplate: MutableList<TemplateConfig>, private var commandTemplate: MutableList<TemplateConfig>) {
+class ActionConfigMasterDetailComponent(project: Project, private val listModel: DefaultListModel<ActionConfig>, private var paramTemplate: MutableList<TemplateConfig>, private var commandTemplate: MutableList<TemplateConfig>) {
 
     private val masterList = JBList(listModel)
 
-    private val detailsComponent = ActionConfigDetail.component()
+    private val detailsComponent = ActionConfigDetail.component(project)
 
     private val detailPanel = JPanel(BorderLayout()).apply {
         add(createEmptyStatePanel(), BorderLayout.CENTER)
