@@ -92,7 +92,7 @@ class ActionConfigDetail {
 
 
     private fun printlnConfig() {
-        println("currentConfig: $currentConfig")
+//        println("currentConfig: $currentConfig")
     }
 
     private fun setupEventListeners() {
@@ -108,7 +108,6 @@ class ActionConfigDetail {
 
         workingDirectory.addActionListener {
             val chooser = FileChooserDescriptor(false, true, false, false, false, false)
-            chooser.isForcedToUseIdeaFileChooser = true;
             val selectedDir = FileChooser.chooseFile(chooser, project, project.projectFile?.parent?.parent)
             selectedDir?.let {
                 workingDirectory.text = it.path
