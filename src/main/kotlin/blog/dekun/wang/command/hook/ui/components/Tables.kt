@@ -124,7 +124,7 @@ class Tables { companion object {
             }
     }
 
-    private fun moveRow(table: JBTable, model: DefaultTableModel, offset: Int) {
+    fun moveRow(table: JBTable, model: DefaultTableModel, offset: Int) {
         val selectedRows = table.selectedRows
         if (selectedRows.isNotEmpty()) {
             val row = if (offset < 0) selectedRows.first() else selectedRows.last()

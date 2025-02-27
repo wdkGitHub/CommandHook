@@ -377,6 +377,12 @@ class ActionConfigDetail {
                 e.presentation.icon = AllIcons.Actions.AddList
             }
         })
+        setMoveUpAction {
+            Tables.moveRow(paramTable, tableModel, -1)
+        }
+        setMoveDownAction {
+            Tables.moveRow(paramTable, tableModel, 1)
+        }
     }.createPanel().apply {
         preferredSize = Dimension(preferredSize.width, 240)
     }

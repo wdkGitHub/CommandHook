@@ -65,7 +65,7 @@ class ActionsConfigurable(val project: Project) : Configurable {
         for (i in 0 until defaultListModel.size) {
             actionConfigList.add(defaultListModel.get(i))
         }
-        return isDataModified(ActionConfigService.getConfigs(project), actionConfigList) ||
+        return isActionConfigListModified(ActionConfigService.getConfigs(project), actionConfigList) ||
                 isDataModified(ActionConfigService.getParamTemplates(project), paramTemplate) ||
                 isDataModified(ActionConfigService.getCommandTemplates(project), commandTemplate)
     }
@@ -73,6 +73,15 @@ class ActionsConfigurable(val project: Project) : Configurable {
     private fun <T> isDataModified(currentData: List<T>, newData: List<T>): Boolean {
         if (currentData.size != newData.size) return true
         return currentData.zip(newData).any { it.first != it.second }
+    }
+
+    private fun isActionConfigListModified(currentData: List<ActionConfig>, newData: List<ActionConfig>): Boolean {
+        if (currentData.size != newData.size) return true
+        return currentData.zip(newData).any { (currentConfig, newConfig) ->
+            val currentParamKey = currentConfig.commandParams.keys.toList()
+            val newParamKey = newConfig.commandParams.keys.toList()
+            currentConfig != newConfig || currentParamKey.size != newParamKey.size || currentParamKey.zip(newParamKey).any { (currentKey, newKey) -> currentKey != newKey }
+        }
     }
 
     override fun apply() {
