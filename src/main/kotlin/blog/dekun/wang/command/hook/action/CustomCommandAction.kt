@@ -6,8 +6,10 @@ import blog.dekun.wang.command.hook.data.ActionConfig
 import blog.dekun.wang.command.hook.data.ActionPosition
 import blog.dekun.wang.command.hook.services.ActionConfigService
 import blog.dekun.wang.command.hook.utils.RunToolWindowUtil
+import blog.dekun.wang.command.hook.utils.Utils
 import com.intellij.icons.AllIcons
 import com.intellij.ide.ChangeProjectIconPalette
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -15,6 +17,8 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.ui.AvatarIcon
+import java.awt.FlowLayout
+import javax.swing.*
 
 /**
  *
@@ -111,7 +115,49 @@ class CustomCommandAction(private val actionConfig: ActionConfig) : BaseAnAction
 
     override fun actionPerformed(event: AnActionEvent) {
         event.project?.let {
-            RunToolWindowUtil.executeWithRealTimeOutput(it, actionConfig)
+            val dynamicParameters: MutableMap<String, String> = mutableMapOf()
+            if (actionConfig.hasDynamicParameters().isNotEmpty()) {
+                val apply = JPanel().apply {
+                    layout = BoxLayout(this, BoxLayout.Y_AXIS)
+                    actionConfig.hasDynamicParameters().forEach { (key, value) ->
+                        val groupPanel = JPanel().apply {
+                            layout = FlowLayout(FlowLayout.LEFT)
+                            add(JLabel("$key 值 : ").apply {
+                                border = BorderFactory.createEmptyBorder(0, 0, 0, 3)
+                                horizontalAlignment = SwingConstants.RIGHT
+                            })
+                            val buttonGroup = ButtonGroup()
+                            value.forEach {
+                                val jbRadioButton = JRadioButton(it).apply {
+                                    border = BorderFactory.createEmptyBorder(0, 0, 0, 3)
+                                    horizontalAlignment = SwingConstants.LEFT
+                                    addChangeListener {
+                                        if (isSelected) {
+                                            dynamicParameters[key] = text
+                                        }
+                                    }
+                                }
+                                add(jbRadioButton)
+                                buttonGroup.add(jbRadioButton)
+                            }
+                        }
+                        add(groupPanel)
+                    }
+                }
+                val result = JOptionPane.showConfirmDialog(null, apply, "动态参数", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE)
+                if (result == JOptionPane.OK_OPTION) {
+                    dynamicParameters.mapValues { (key, selectedValue) ->
+                        dynamicParameters[key] = selectedValue
+                    }
+                } else {
+                    return
+                }
+                if (actionConfig.hasDynamicParameters().size != dynamicParameters.size) {
+                    Utils.showNotification(it, "缺少参数", "请输入所有参数", NotificationType.ERROR)
+                    return
+                }
+            }
+            RunToolWindowUtil.executeWithRealTimeOutput(it, actionConfig, dynamicParameters)
         }
     }
 

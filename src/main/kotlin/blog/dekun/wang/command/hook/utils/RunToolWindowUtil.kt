@@ -24,7 +24,7 @@ import javax.swing.JPanel
 
 object RunToolWindowUtil {
 
-    fun executeWithRealTimeOutput(project: Project, actionConfig: ActionConfig) {
+    fun executeWithRealTimeOutput(project: Project, actionConfig: ActionConfig, dynamicParameters: MutableMap<String, String> = mutableMapOf()) {
         val regex = Regex("\\{\\{([a-zA-Z_]+)}}")
         var commandStr = actionConfig.commandStr.trim()
 
@@ -34,7 +34,8 @@ object RunToolWindowUtil {
         }
         // 参数替换逻辑
         commandStr = regex.replace(commandStr) { matchResult ->
-            actionConfig.commandParams[matchResult.groupValues[1]] ?: System.getenv(matchResult.groupValues[1]) ?: matchResult.value
+            val paramName = matchResult.groupValues[1]
+            dynamicParameters[paramName] ?: actionConfig.commandParams[paramName] ?: System.getenv(paramName) ?: matchResult.value
         }
         // 执行命令逻辑
         val consoleView: ConsoleView = TextConsoleBuilderFactory.getInstance().createBuilder(project).console

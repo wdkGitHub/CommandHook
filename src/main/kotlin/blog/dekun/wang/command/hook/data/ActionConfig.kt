@@ -25,6 +25,15 @@ data class ActionConfig(
     var index: Int = 0
 ) {
 
+    fun hasDynamicParameters(): Map<String, List<String>> {
+        val result = mutableMapOf<String, List<String>>()
+        for ((key, value) in commandParams) {
+            if (value.contains(",")) {
+                result[key] = value.split(",")
+            }
+        }
+        return result
+    }
     fun copy() = ActionConfig(
         name = name,
         enable = enable,
