@@ -82,7 +82,7 @@ class ActionConfigMasterDetailComponent(project: Project, private val listModel:
                 masterList.selectedIndex = listModel.size - 1
             }.setEditAction {
                 selectedConfig?.let {
-                    val newName = JOptionPane.showInputDialog(null, "请输入名称：", "修改名称", JOptionPane.PLAIN_MESSAGE, null, null, it.name) as String
+                    val newName = JOptionPane.showInputDialog(null, "请输入名称：", "修改名称", JOptionPane.PLAIN_MESSAGE, null, null, it.name) as? String ?: ""
                     if (newName.isNotBlank()) {
                         it.name = newName
                         masterList.repaint()
@@ -107,7 +107,9 @@ class ActionConfigMasterDetailComponent(project: Project, private val listModel:
 
                 override fun actionPerformed(e: AnActionEvent) {
                     selectedConfig?.let {
-                        val newConfig = it.copy(name = "${it.name} Copy")
+                        val newConfig: ActionConfig = it.copy()
+                        newConfig.index = masterList.selectedIndex + 1
+                        newConfig.name += " (copy)"
                         listModel.add(masterList.selectedIndex + 1, newConfig)
                         masterList.selectedIndex += 1
                     }
