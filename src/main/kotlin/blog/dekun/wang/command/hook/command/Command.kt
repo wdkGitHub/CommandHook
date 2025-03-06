@@ -4,6 +4,8 @@ import blog.dekun.wang.command.hook.constants.CommandType
 import com.intellij.openapi.util.SystemInfo
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
  *
@@ -136,12 +138,12 @@ interface Command {
 
 class ResultCache(private val maxSize: Int = 100) {
 
-    // 使用 LinkedHashMap 来保持插入顺序
-    private val cache = LinkedHashMap<String, String>(maxSize, 0.75f, true)
+    // 线程安全的缓存
+    private val cache = ConcurrentHashMap<String, String>()
 
-    /**
-     * 获取缓存中的值，如果没有则返回 null
-     */
+    // 维护插入顺序
+    private val keys = ConcurrentLinkedQueue<String>()
+
     fun get(key: String): String? {
         return cache[key]
     }
@@ -150,19 +152,26 @@ class ResultCache(private val maxSize: Int = 100) {
      * 将数据添加到缓存中，如果缓存已满，删除最早添加的项
      */
     fun put(key: String, value: String) {
-        if (cache.size >= maxSize) {
-            // 删除最早添加的项
-            val firstKey = cache.entries.iterator().next().key
-            cache.remove(firstKey)
+        synchronized(this) {
+            if (cache.size >= maxSize) {
+                val oldestKey = keys.poll()  // 移除最早的键
+                if (oldestKey != null) {
+                    cache.remove(oldestKey)
+                }
+            }
+            cache[key] = value
+            keys.add(key)  // 记录新插入的键
         }
-        cache[key] = value
     }
 
     /**
      * 清除缓存
      */
     fun clear() {
-        cache.clear()
+        synchronized(this) {
+            cache.clear()
+            keys.clear()
+        }
     }
 }
 
