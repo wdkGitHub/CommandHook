@@ -5,6 +5,7 @@ import blog.dekun.wang.command.hook.constants.CommandType
 import blog.dekun.wang.command.hook.constants.Constant
 import blog.dekun.wang.command.hook.utils.Utils
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.vcs.VcsDataKeys
@@ -71,6 +72,19 @@ interface WelcomeScreen {
             withContext(Dispatchers.IO) {
                 ReadAction.compute<String?, RuntimeException> {
                     gitRepositoryManager.getRepositoryForFile(firstFile)?.root?.path
+                }
+            }
+        }
+    }
+
+    fun getRepositoryDirByVirtualFile(event: AnActionEvent): String? {
+        val project = event.project ?: return null
+        val gitRepositoryManager = GitRepositoryManager.getInstance(project)
+        val virtualFile = event.getData(PlatformDataKeys.VIRTUAL_FILE)
+        return runBlocking {
+            withContext(Dispatchers.IO) {
+                ReadAction.compute<String?, RuntimeException> {
+                    gitRepositoryManager.getRepositoryForFile(virtualFile)?.root?.path
                 }
             }
         }

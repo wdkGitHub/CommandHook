@@ -3,6 +3,7 @@ package blog.dekun.wang.command.hook.command
 import blog.dekun.wang.command.hook.constants.CommandType
 import com.intellij.openapi.util.SystemInfo
 import java.io.BufferedReader
+import java.io.File
 import java.io.InputStreamReader
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -46,7 +47,7 @@ interface Command {
             val commandStr = commands.joinToString(" ")
             println("执行的命令：$commandStr $dirPath")
             val processBuilder = ProcessBuilder(listOf(System.getenv("SHELL") ?: "/bin/bash", "-c", commandStr))
-            dirPath?.let { processBuilder.directory(java.io.File(it)) }
+            dirPath?.takeIf { File(it).isDirectory }?.let { processBuilder.directory(File(it)) }
             processBuilder.redirectErrorStream(true)
             val process = processBuilder.start()
             val output = StringBuilder()
